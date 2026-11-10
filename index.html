@@ -1,0 +1,2310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>index</title><script>document.title="Simulasi & Game Interaktif: Media Transmisi Kabel dan Nirkabel";</script>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0F172A;
+      color: #F8FAFC;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, .font-display {
+      font-family: 'Outfit', sans-serif;
+    }
+    .card-glass {
+      background: rgba(30, 27, 75, 0.75);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      backdrop-filter: blur(8px);
+    }
+    .media-btn-active {
+      border-color: #F97316 !important;
+      background: rgba(249, 115, 22, 0.16) !important;
+      box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.35);
+    }
+    .tab-btn-active {
+      background: #4F46E5 !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    }
+    input[type="range"] {
+      accent-color: #F97316;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <!-- Top Header & Navigation Bar -->
+  <header class="bg-[#1E1B4B] border-b border-indigo-500/30 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-indigo-600 flex items-center justify-center shadow-md">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-widest text-orange-400 block">SMK Informatika • Sesi Interaktif (Menit 33–37)</span>
+          <h1 class="text-lg sm:text-xl font-bold text-white leading-tight">Lab & Game Media Transmisi Jaringan</h1>
+        </div>
+      </div>
+
+      <!-- Mode Switcher Tabs -->
+      <nav class="flex flex-wrap items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-xl border border-indigo-500/20" aria-label="Mode Navigasi">
+        <button id="tabBtnArcade" type="button" onclick="switchTab('arcade')" class="tab-btn-active px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 transition">
+          ⚡ Arena Game Anti-Ngantuk
+        </button>
+        <button id="tabBtnMission" type="button" onclick="switchTab('mission')" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition">
+          1. Tantangan Kasus (5 Misi)
+        </button>
+        <button id="tabBtnLab" type="button" onclick="switchTab('lab')" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition">
+          2. Simulator Sinyal Live
+        </button>
+        <button id="tabBtnBattle" type="button" onclick="switchTab('battle')" class="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition">
+          3. Battle 2 Tim Kelas
+        </button>
+      </nav>
+
+      <!-- Score & Audio Controls -->
+      <div class="flex items-center gap-2">
+        <div class="bg-slate-900/90 border border-indigo-500/30 px-3 py-1.5 rounded-lg flex items-center gap-2">
+          <span class="text-xs text-slate-400">Skor Misi:</span>
+          <span id="headerScore" class="font-display font-bold text-orange-400 text-base">0 / 500</span>
+        </div>
+        <button id="soundToggleBtn" type="button" onclick="toggleSound()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition" title="Aktifkan/Matikan Suara Efek">
+          <span id="soundIcon">🔊</span>
+          <span id="soundLabel" class="hidden sm:inline">Suara Aktif</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace Container -->
+  <main class="max-w-7xl w-full mx-auto px-4 py-5 flex-1">
+
+    <!-- =================================================================== -->
+    <!-- VIEW 0: ARENA GAME PERKABELAN ANTI-NGANTUK (PEMAIN & PENONTON)      -->
+    <!-- =================================================================== -->
+    <section id="viewArcade" class="space-y-5">
+      <!-- Top Banner & Sub-game Switcher + Party Soundboard -->
+      <div class="card-glass rounded-2xl p-4 border border-orange-500/30 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="subBtnCrimp" type="button" onclick="switchArcadeMode('crimp')" class="tab-btn-active px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold text-white transition flex items-center gap-1.5">
+            🔌 1. Balap Crimping RJ-45 (LAN Tester)
+          </button>
+          <button id="subBtnRunner" type="button" onclick="switchArcadeMode('runner')" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-300 hover:text-white bg-slate-800/80 border border-slate-700 transition flex items-center gap-1.5">
+            🏃‍♂️ 2. Lari Sinyal (Hindari Petir &amp; Tembok!)
+          </button>
+          <button id="subBtnWheel" type="button" onclick="switchArcadeMode('wheel')" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-300 hover:text-white bg-slate-800/80 border border-slate-700 transition flex items-center gap-1.5">
+            🎡 3. Roda Kejutan Penonton
+          </button>
+        </div>
+
+        <!-- Classroom Soundboard for Teacher / Spectators -->
+        <div class="flex flex-wrap items-center gap-1.5 bg-slate-950/80 px-3 py-1.5 rounded-xl border border-indigo-500/30">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-orange-400 mr-1">Efek Suara Kelas:</span>
+          <button type="button" onclick="playPartySound('fanfare')" class="px-2.5 py-1 rounded-lg bg-emerald-600/30 hover:bg-emerald-500/40 border border-emerald-500/40 text-emerald-200 text-xs font-semibold transition">
+            🎺 Juara!
+          </button>
+          <button type="button" onclick="playPartySound('siren')" class="px-2.5 py-1 rounded-lg bg-amber-600/30 hover:bg-amber-500/40 border border-amber-500/40 text-amber-200 text-xs font-semibold transition">
+            🚨 Panik!
+          </button>
+          <button type="button" onclick="playPartySound('buzzer')" class="px-2.5 py-1 rounded-lg bg-rose-600/30 hover:bg-rose-500/40 border border-rose-500/40 text-rose-200 text-xs font-semibold transition">
+            ❌ Korslet!
+          </button>
+          <button type="button" onclick="playPartySound('drum')" class="px-2.5 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-500/40 border border-indigo-500/40 text-indigo-200 text-xs font-semibold transition">
+            🥁 Tegangan
+          </button>
+        </div>
+      </div>
+
+      <!-- SUB-GAME 1: BALAP CRIMPING RJ-45 (T568B vs T568A) -->
+      <div id="arcadePanelCrimp" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Left Column: Controls, Wire Palette & Spectator Hints -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="card-glass rounded-2xl p-5 space-y-4">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-widest text-orange-400 block">Aksi Cepat Anak Jaringan</span>
+                <h2 class="text-lg font-display font-bold text-white">Balap Crimping Konektor RJ-45</h2>
+              </div>
+              <div class="text-right bg-slate-950/90 px-3 py-1.5 rounded-xl border border-orange-500/40">
+                <span class="text-[10px] uppercase tracking-wider text-slate-400 block">Sisa Waktu</span>
+                <span id="crimpTimerDisplay" class="font-display font-extrabold text-xl text-orange-400">25.0s</span>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed">
+              <strong>Cara Main Seru Sekelas:</strong> Satu siswa maju/memegang HP, sementara <strong>penonton sekelas berteriak memberi komando urutan warna Pin 1 sampai Pin 8</strong> sebelum waktu habis!
+            </p>
+
+            <!-- Player Name & Standard Mode Selector -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <label for="crimpPlayerName" class="text-[11px] text-slate-400 font-semibold block mb-1">Nama Pemain / Tim:</label>
+                <input id="crimpPlayerName" type="text" value="Siswa Jagoan 1" maxlength="22" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-orange-400" />
+              </div>
+              <div>
+                <label for="crimpStandardSelect" class="text-[11px] text-slate-400 font-semibold block mb-1">Target Standar Urutan:</label>
+                <select id="crimpStandardSelect" onchange="changeCrimpStandard(this.value)" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-orange-400">
+                  <option value="T568B">Standar T568B (Umum di Indonesia)</option>
+                  <option value="T568A">Standar T568A (Pasangan Hijau Dulu)</option>
+                  <option value="BLIND_B">T568B Mode Buta (Tanpa Contekan!)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Reference Guide Toggle (Hidden in Blind Mode) -->
+            <div id="crimpCheatSheetBox" class="p-3 rounded-xl bg-indigo-950/60 border border-indigo-500/30 text-xs space-y-1">
+              <div class="flex items-center justify-between">
+                <span id="crimpCheatTitle" class="font-bold text-indigo-200">Komando Penonton — Urutan T568B (Pin 1 → 8):</span>
+                <button type="button" onclick="toggleCrimpCheatSheet()" class="text-[11px] text-orange-300 hover:text-orange-200 underline">Sembunyikan/Tampilkan</button>
+              </div>
+              <p id="crimpCheatText" class="text-slate-300 text-[11px] leading-relaxed">
+                <strong>1.</strong> Putih-Oranye • <strong>2.</strong> Oranye • <strong>3.</strong> Putih-Hijau • <strong>4.</strong> Biru • <strong>5.</strong> Putih-Biru • <strong>6.</strong> Hijau • <strong>7.</strong> Putih-Cokelat • <strong>8.</strong> Cokelat
+              </p>
+            </div>
+
+            <!-- 8 Wire Buttons Palette -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Pilih Kawat untuk Dimasukkan ke Pin #<span id="crimpNextPinNum" class="text-orange-400">1</span>:</span>
+                <div class="flex items-center gap-1.5">
+                  <button type="button" onclick="undoLastCrimpWire()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-600">
+                    ↩️ Cabut Pin
+                  </button>
+                  <button type="button" onclick="startNewCrimpRound()" class="px-2.5 py-1 rounded-lg bg-indigo-600/40 hover:bg-indigo-600/60 text-indigo-200 text-[11px] font-semibold border border-indigo-500/40">
+                    🔀 Acak Ulang
+                  </button>
+                </div>
+              </div>
+              <div id="crimpWirePalette" class="grid grid-cols-2 gap-2"></div>
+            </div>
+
+            <!-- Big Crimping Action Button -->
+            <button id="btnExecuteCrimp" type="button" onclick="executeCrimpingTest()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-display font-extrabold text-sm uppercase tracking-wider shadow-lg shadow-orange-500/25 transition">
+              🔨 JEPIT TANG CRIMPING &amp; UJI LAN TESTER!
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Giant RJ-45 + LAN Tester Visual Canvas & Class Leaderboard -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="card-glass rounded-2xl p-5 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-indigo-300">Visualisasi Konektor RJ-45 &amp; 8-LED LAN Cable Tester</h3>
+                <p class="text-xs text-slate-400">Pengait menghadap bawah: Pin 1-2 (Kirim/TX) dan Pin 3-6 (Terima/RX) wajib sepasang terpilin!</p>
+              </div>
+              <span id="crimpStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                Siap Merakit (0 / 8 Pin)
+              </span>
+            </div>
+
+            <div class="relative w-full h-72 sm:h-80 rounded-xl overflow-hidden bg-slate-950 border border-indigo-500/30">
+              <canvas id="crimpCanvas" class="w-full h-full block"></canvas>
+            </div>
+
+            <!-- Feedback Banner -->
+            <div id="crimpResultBanner" class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700 text-xs text-slate-200 leading-relaxed">
+              💡 <strong>Tips Teknisi:</strong> Jangan menyusun warna berurutan sekadar agar terlihat "cantik" — pada <a href="https://www.wallblock.co.id/insight/urutan-warna-kabel-lan" target="_blank" rel="noopener noreferrer" class="text-orange-400 underline">standar ANSI/TIA-568 (Wallblock)</a>, Pin 3 dan Pin 6 melompati pasangan Biru (Pin 4–5) agar sinyal Gigabit Ethernet tidak terkena <em>split-pair crosstalk</em>!
+            </div>
+          </div>
+
+          <!-- Class Fastest Crimping Leaderboard -->
+          <div class="card-glass rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-orange-400">🏆 Papan Rekor Tercepat Kelas (Top Crimpers)</h4>
+              <p class="text-[11px] text-slate-400">Susun 8 pin dengan benar dan tekan Tang Crimping secepat mungkin untuk masuk peringkat 1!</p>
+            </div>
+            <div id="crimpLeaderboardList" class="flex flex-wrap items-center gap-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-GAME 2: ARCADE LARI SINYAL (SIGNAL RUNNER LIVE ACTION) -->
+      <div id="arcadePanelRunner" class="hidden space-y-4">
+        <div class="card-glass rounded-2xl p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-widest text-orange-400 block">Game Refleks &amp; Komando Penonton</span>
+              <h2 class="text-lg sm:text-xl font-display font-bold text-white">🏃‍♂️ Arcade Lari Sinyal: Ganti Media Sebelum Tabrakan!</h2>
+              <p class="text-xs text-slate-300">Paket data melaju kencang! <strong>Penonton meneriakkan rintangan di depan</strong>, dan pemain menekan tombol <strong>[1] UTP</strong>, <strong>[2] Fiber Optik</strong>, atau <strong>[3] Wi-Fi</strong> yang tepat untuk menembusnya!</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="bg-slate-950 px-3.5 py-2 rounded-xl border border-indigo-500/30 text-center">
+                <span class="text-[10px] text-slate-400 uppercase block">Skor Lari</span>
+                <span id="runnerScoreText" class="font-display font-extrabold text-lg text-orange-400">0</span>
+              </div>
+              <div class="bg-slate-950 px-3.5 py-2 rounded-xl border border-emerald-500/30 text-center">
+                <span class="text-[10px] text-slate-400 uppercase block">Combo</span>
+                <span id="runnerComboText" class="font-display font-extrabold text-lg text-emerald-400">x1</span>
+              </div>
+              <div class="bg-slate-950 px-3.5 py-2 rounded-xl border border-rose-500/30 text-center">
+                <span class="text-[10px] text-slate-400 uppercase block">Nyawa Link</span>
+                <span id="runnerLivesText" class="font-display font-bold text-base">❤️❤️❤️</span>
+              </div>
+              <button id="btnStartRunner" type="button" onclick="startRunnerGame()" class="px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 font-display font-extrabold text-xs uppercase tracking-wider shadow-lg">
+                ▶ Mulai Lari!
+              </button>
+            </div>
+          </div>
+
+          <!-- Giant Action Runner Canvas -->
+          <div class="relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden bg-slate-950 border-2 border-indigo-500/40">
+            <canvas id="runnerCanvas" class="w-full h-full block"></canvas>
+          </div>
+
+          <!-- 3 Giant Media Switch Controls (Touch / Mouse / Keyboard 1-2-3) -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <button id="runnerBtnMedia0" type="button" onclick="setRunnerMedia(0)" class="p-3.5 rounded-xl border-2 border-orange-500 bg-orange-500/20 text-left transition flex items-center justify-between">
+              <div>
+                <span class="text-[11px] font-bold text-orange-300 uppercase block">Tombol [1] • Kabel Tembaga</span>
+                <span class="text-sm font-display font-extrabold text-white">🔌 Kabel UTP / STP (PoE)</span>
+                <span class="text-[11px] text-slate-300 block mt-0.5">Cocok: Meja PC Lab &le;100m &amp; CCTV PoE</span>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-orange-500 text-slate-950 font-extrabold text-xs">1</span>
+            </button>
+
+            <button id="runnerBtnMedia1" type="button" onclick="setRunnerMedia(1)" class="p-3.5 rounded-xl border-2 border-slate-700 bg-slate-900/80 hover:border-cyan-400 text-left transition flex items-center justify-between">
+              <div>
+                <span class="text-[11px] font-bold text-cyan-300 uppercase block">Tombol [2] • Serat Kaca Cahaya</span>
+                <span class="text-sm font-display font-extrabold text-white">✨ Fiber Optik (Kebal EMI)</span>
+                <span class="text-[11px] text-slate-300 block mt-0.5">Cocok: Petir/Mesin Las &amp; Gedung Jauh &gt;100m</span>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-cyan-400 text-slate-950 font-extrabold text-xs">2</span>
+            </button>
+
+            <button id="runnerBtnMedia2" type="button" onclick="setRunnerMedia(2)" class="p-3.5 rounded-xl border-2 border-slate-700 bg-slate-900/80 hover:border-emerald-400 text-left transition flex items-center justify-between">
+              <div>
+                <span class="text-[11px] font-bold text-emerald-300 uppercase block">Tombol [3] • Gelombang Radio</span>
+                <span class="text-sm font-display font-extrabold text-white">📡 Wi-Fi Dual-Band (Mobility)</span>
+                <span class="text-[11px] text-slate-300 block mt-0.5">Cocok: HP/Laptop Bergerak &amp; Taman Terbuka</span>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-400 text-slate-950 font-extrabold text-xs">3</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-GAME 3: RODA KEJUTAN PENONTON (SPIN WHEEL PARTY MODE) -->
+      <div id="arcadePanelWheel" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div class="lg:col-span-6 card-glass rounded-2xl p-5 flex flex-col items-center justify-center space-y-4">
+          <div class="text-center">
+            <span class="text-[11px] font-bold uppercase tracking-widest text-orange-400 block">Bikin Sekelas Melek &amp; Heboh</span>
+            <h2 class="text-lg font-display font-bold text-white">🎡 Roda Putar Tantangan Dadakan</h2>
+            <p class="text-xs text-slate-300">Putar roda di layar proyektor untuk memilih tantangan kilat bagi pemain atau penonton!</p>
+          </div>
+          <div class="relative w-72 h-72 sm:w-80 sm:h-80">
+            <canvas id="wheelCanvas" width="320" height="320" class="w-full h-full block"></canvas>
+          </div>
+          <button id="btnSpinWheel" type="button" onclick="spinClassroomWheel()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-400 hover:to-pink-400 text-slate-950 font-display font-extrabold text-sm uppercase tracking-wider shadow-lg">
+            🎲 PUTAR RODA TANTANGAN SEKARANG!
+          </button>
+        </div>
+
+        <div class="lg:col-span-6 card-glass rounded-2xl p-5 flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-300 border border-orange-500/30 inline-block">
+              Hasil Putaran Roda Kelas
+            </span>
+            <h3 id="wheelResultTitle" class="text-xl font-display font-extrabold text-white">
+              Siap Diputar! Klik Tombol Putar Roda
+            </h3>
+            <p id="wheelResultDesc" class="text-sm text-slate-200 leading-relaxed bg-slate-900/90 p-4 rounded-xl border border-indigo-500/30">
+              Roda ini berisi 8 tantangan interaktif berdurasi 10–15 detik agar penonton di bangku belakang ikut deg-degan dan tidak mengantuk.
+            </p>
+            <div id="wheelAnswerBox" class="hidden p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-xs text-emerald-200 space-y-1">
+              <span class="font-bold uppercase tracking-wider text-emerald-300 block">🔑 Kunci Jawaban Guru / Wasit:</span>
+              <p id="wheelAnswerText"></p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800">
+            <button type="button" onclick="toggleWheelAnswer()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-600">
+              👁️ Buka / Tutup Kunci Jawaban
+            </button>
+            <button type="button" onclick="playPartySound('fanfare')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold">
+              🎉 Beri Tepuk Tangan / Fanfare!
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 1: TANTANGAN ARSITEK JARINGAN (5 MISI STUDI KASUS)             -->
+    <!-- =================================================================== -->
+    <section id="viewMission" class="hidden space-y-5">
+      <!-- Mission Progress Bar -->
+      <div class="card-glass rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-2 flex-wrap" id="missionStepper"></div>
+        <div class="flex items-center gap-2">
+          <button id="prevMissionBtn" type="button" onclick="changeMission(-1)" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-600 transition">
+            ◀ Misi Sebelumnya
+          </button>
+          <button id="nextMissionBtn" type="button" onclick="changeMission(1)" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition">
+            Misi Berikutnya ▶
+          </button>
+          <button id="resetMissionBtn" type="button" onclick="resetAllMissions()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-red-900/60 text-xs font-semibold text-slate-300 border border-slate-700 transition">
+            Reset Skor
+          </button>
+        </div>
+      </div>
+
+      <!-- Mission Scenario & Live Simulation Canvas -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Left Column: Scenario Brief & Media Picker (5 cols) -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="card-glass rounded-2xl p-5 space-y-3 border-l-4 border-l-orange-500">
+            <div class="flex items-center justify-between">
+              <span id="missionBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-500/20 text-orange-300 border border-orange-500/30">
+                MISI 1 DARI 5 • STUDI KASUS SLIDE 10
+              </span>
+              <span id="missionStatusPill" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300">
+                Belum Diselesaikan
+              </span>
+            </div>
+            <h2 id="missionTitle" class="text-xl font-bold text-white">Tantangan 1: Jalur Antar-Gedung (250 Meter)</h2>
+            <p id="missionDesc" class="text-sm text-slate-200 leading-relaxed">
+              Sekolah ingin menghubungkan Ruang Server ke Lab Komputer Baru yang berjarak 250 meter melewati jalur luar gedung yang rawan petir dan induksi listrik. Laju data minimal yang dibutuhkan adalah 1 Gbps.
+            </p>
+            <div class="grid grid-cols-3 gap-2 pt-2">
+              <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/80 text-center">
+                <span class="text-[11px] text-slate-400 block">Jarak Target</span>
+                <span id="missionReqDist" class="font-display font-bold text-sm text-amber-300">250 Meter</span>
+              </div>
+              <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/80 text-center">
+                <span class="text-[11px] text-slate-400 block">Target Laju</span>
+                <span id="missionReqSpeed" class="font-display font-bold text-sm text-cyan-300">≥ 1 Gbps</span>
+              </div>
+              <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/80 text-center">
+                <span class="text-[11px] text-slate-400 block">Kondisi Lingkungan</span>
+                <span id="missionReqEnv" class="font-display font-bold text-sm text-rose-300">Rawan EMI/Petir</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Media Selection Cards -->
+          <div class="card-glass rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-indigo-300">Pilih Media Transmisi & Uji Kirim Paket:</h3>
+              <span class="text-xs text-slate-400">Klik salah satu opsi</span>
+            </div>
+            <div id="missionMediaGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+            <button id="transmitBtn" type="button" onclick="runMissionTest()" class="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-display font-extrabold text-sm uppercase tracking-wider shadow-lg transition transform active:scale-[0.99]">
+              🚀 Uji Kirim Paket Data Sekarang!
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Visual Canvas & Diagnostic Result (7 cols) -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+          <div class="card-glass rounded-2xl p-4 flex-1 flex flex-col justify-between space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="text-base font-bold text-white">Visualisasi Lapisan Fisik (OSI Layer 1)</h3>
+                <p id="canvasSubtitle" class="text-xs text-slate-300">Pilih media di sebelah kiri lalu klik "Uji Kirim Paket Data"</p>
+              </div>
+              <div class="flex items-center gap-3 text-xs">
+                <span class="flex items-center gap-1.5 text-emerald-300"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span> Sinyal Utuh</span>
+                <span class="flex items-center gap-1.5 text-rose-300"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span> Redaman / Gangguan EMI</span>
+              </div>
+            </div>
+
+            <!-- Responsive HTML5 Canvas -->
+            <div class="relative w-full h-64 sm:h-72 bg-slate-950 rounded-xl border border-indigo-500/30 overflow-hidden">
+              <canvas id="missionCanvas" class="w-full h-full block"></canvas>
+            </div>
+
+            <!-- Telemetry Metrics Bar -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 block">Wujud Sinyal Fisik</span>
+                <span id="metricSignalType" class="font-bold text-xs sm:text-sm text-indigo-300">Belum Dipilih</span>
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 block">Batas Jarak Media</span>
+                <span id="metricMaxDist" class="font-bold text-xs sm:text-sm text-white">—</span>
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 block">Kualitas Sinyal Tiba</span>
+                <span id="metricSignalQuality" class="font-bold text-xs sm:text-sm text-emerald-400">— %</span>
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 block">Kecepatan Tercapai</span>
+                <span id="metricThroughput" class="font-bold text-xs sm:text-sm text-amber-300">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feedback / Explanation Box -->
+          <div id="missionFeedbackBox" class="card-glass rounded-2xl p-4 border-l-4 border-l-indigo-500">
+            <h4 id="feedbackHeadline" class="font-display font-bold text-base text-indigo-300">Panduan Guru & Siswa:</h4>
+            <p id="feedbackBody" class="text-sm text-slate-200 mt-1 leading-relaxed">
+              Diskusikan bersama kelas: perhatikan jarak target, kebutuhan kecepatan, dan apakah lingkungan memiliki gangguan listrik (EMI) atau membutuhkan mobilitas nirkabel.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 2: LABORATORIUM SIMULATOR SINYAL LIVE                          -->
+    <!-- =================================================================== -->
+    <section id="viewLab" class="hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Controls Panel (5 cols) -->
+        <div class="lg:col-span-5 card-glass rounded-2xl p-5 space-y-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-orange-400">Eksperimen Bebas Lapisan Fisik</span>
+            <h2 class="text-xl font-bold text-white">Simulator Redaman & Interferensi Sinyal</h2>
+            <p class="text-xs text-slate-300 mt-1">Ubah jarak dan tingkat gangguan untuk membuktikan mengapa setiap media memiliki batas jarak efektif.</p>
+          </div>
+
+          <!-- Media Selector -->
+          <div class="space-y-1.5">
+            <label for="labMediaSelect" class="text-xs font-semibold text-slate-300 block">1. Pilih Media Transmisi:</label>
+            <select id="labMediaSelect" onchange="updateLabSimulation()" class="w-full bg-slate-900 border border-indigo-500/40 rounded-xl px-3.5 py-2.5 text-sm text-white font-medium focus:outline-none focus:border-orange-500">
+              <option value="utp_cat5e">Kabel Twisted Pair — UTP Cat5e (Maks. 100 m • 1 Gbps)</option>
+              <option value="stp_cat6a">Kabel Twisted Pair — STP/Cat6a PoE (Maks. 100 m • 10 Gbps)</option>
+              <option value="coaxial">Kabel Coaxial — Thin/Thick 10Base5 (Maks. 500 m • 100 Mbps)</option>
+              <option value="fiber_mmf">Serat Optik — Multi-Mode OM4 50 µm LED (Maks. 550 m • 100 Gbps)</option>
+              <option value="fiber_smf">Serat Optik — Single-Mode 9 µm Laser (Maks. 50 km • 100 Gbps)</option>
+              <option value="wifi_24">Nirkabel — Wi-Fi 2,4 GHz Gelombang Radio (Jangkauan ~70 m)</option>
+              <option value="wifi_6_5g">Nirkabel — Wi-Fi 6 / 7 (5 GHz & 6 GHz • 9,6–46 Gbps)</option>
+            </select>
+          </div>
+
+          <!-- Distance Slider + Presets -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <label for="labDistSlider" class="text-xs font-semibold text-slate-300">2. Jarak Pengiriman Data:</label>
+              <span id="labDistLabel" class="font-display font-bold text-sm text-orange-400">60 Meter</span>
+            </div>
+            <input id="labDistSlider" type="range" min="10" max="5000" step="10" value="60" oninput="updateLabSimulation()" class="w-full cursor-pointer" />
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button type="button" onclick="setLabDistance(35)" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-200 border border-slate-700">35 m (Ruang Lab)</button>
+              <button type="button" onclick="setLabDistance(100)" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-200 border border-slate-700">100 m (Batas UTP)</button>
+              <button type="button" onclick="setLabDistance(250)" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-200 border border-slate-700">250 m (Antar Gedung)</button>
+              <button type="button" onclick="setLabDistance(500)" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-200 border border-slate-700">500 m (Batas Coax)</button>
+              <button type="button" onclick="setLabDistance(3000)" class="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-200 border border-slate-700">3.000 m (3 km Antar Kota)</button>
+            </div>
+          </div>
+
+          <!-- EMI Level Buttons -->
+          <div class="space-y-1.5">
+            <span class="text-xs font-semibold text-slate-300 block">3. Intensitas Gangguan Elektromagnetik (EMI / Mesin Listrik):</span>
+            <div class="grid grid-cols-3 gap-2">
+              <button id="emiBtnLow" type="button" onclick="setLabEmi('low')" class="py-2 rounded-lg text-xs font-bold bg-indigo-600 text-white border border-indigo-400">Rendah</button>
+              <button id="emiBtnMed" type="button" onclick="setLabEmi('med')" class="py-2 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700">Sedang</button>
+              <button id="emiBtnHigh" type="button" onclick="setLabEmi('high')" class="py-2 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700">Tinggi (Mesin/Petir)</button>
+            </div>
+          </div>
+
+          <!-- Wall Obstacle Toggle (for Wireless) -->
+          <div class="flex items-center justify-between bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+            <div>
+              <span class="text-xs font-semibold text-white block">Halangan Dinding Beton Tebal</span>
+              <span class="text-[11px] text-slate-400">Menguji daya tembus gelombang Wi-Fi 2,4 GHz vs 5 GHz</span>
+            </div>
+            <button id="wallToggleBtn" type="button" onclick="toggleLabWall()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 border border-slate-600">
+              Tanpa Tembok
+            </button>
+          </div>
+        </div>
+
+        <!-- Lab Live Oscilloscope & Telemetry (7 cols) -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+          <div class="card-glass rounded-2xl p-4 flex-1 flex flex-col justify-between space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-base font-bold text-white">Osiloskop Perambatan Sinyal Real-Time</h3>
+              <span id="labStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                STATUS: VALID (SINYAL STABIL)
+              </span>
+            </div>
+
+            <div class="relative w-full h-64 bg-slate-950 rounded-xl border border-indigo-500/30 overflow-hidden">
+              <canvas id="labCanvas" class="w-full h-full block"></canvas>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+              <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 block">Kekuatan Sinyal Tiba</span>
+                <span id="labStrengthVal" class="font-display font-bold text-lg text-emerald-400">96%</span>
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 block">Estimasi Laju Data</span>
+                <span id="labSpeedVal" class="font-display font-bold text-lg text-cyan-300">1,0 Gbps</span>
+              </div>
+              <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 block">Redaman / Loss</span>
+                <span id="labLossVal" class="font-display font-bold text-lg text-amber-300">4%</span>
+              </div>
+            </div>
+
+            <div class="bg-slate-900/95 p-3.5 rounded-xl border border-indigo-500/30">
+              <p id="labAnalysisText" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 3: BATTLE KUIS 2 TIM KELAS (TIM KABEL VS TIM NIRKABEL)         -->
+    <!-- =================================================================== -->
+    <section id="viewBattle" class="hidden space-y-5">
+      <!-- Scoreboard -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div id="teamCardA" class="card-glass rounded-2xl p-4 border-2 border-indigo-500 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-300">TIM A (GILIRAN AKTIF)</span>
+            <h3 class="text-lg font-bold text-white">🔌 Tim Kabel (Guided)</h3>
+          </div>
+          <span id="scoreTeamA" class="font-display font-extrabold text-3xl text-indigo-400">0</span>
+        </div>
+
+        <div class="card-glass rounded-2xl p-4 flex flex-col items-center justify-center text-center">
+          <span class="text-xs text-slate-400 uppercase tracking-wider">Babak Kuis Cepat Kelas</span>
+          <span id="battleProgressText" class="font-display font-bold text-lg text-orange-400 mt-0.5">Soal 1 dari 6</span>
+          <div class="flex gap-2 mt-2">
+            <button type="button" onclick="switchTurn()" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-600">
+              Tukarkan Giliran Tim
+            </button>
+            <button type="button" onclick="resetBattleQuiz()" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-red-900/60 text-xs font-semibold text-slate-300 border border-slate-700">
+              Ulangi Kuis
+            </button>
+          </div>
+        </div>
+
+        <div id="teamCardB" class="card-glass rounded-2xl p-4 border-2 border-transparent flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-orange-300">TIM B</span>
+            <h3 class="text-lg font-bold text-white">📡 Tim Nirkabel (Unguided)</h3>
+          </div>
+          <span id="scoreTeamB" class="font-display font-extrabold text-3xl text-orange-400">0</span>
+        </div>
+      </div>
+
+      <!-- Quiz Question Card -->
+      <div class="card-glass rounded-2xl p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span id="battleTurnIndicator" class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">
+            Giliran Menjawab: 🔌 Tim Kabel (Guided)
+          </span>
+          <span class="text-xs text-slate-400">Jawaban benar +100 poin</span>
+        </div>
+
+        <h2 id="battleQuestionText" class="text-lg sm:text-xl font-bold text-white leading-snug"></h2>
+
+        <div id="battleOptionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+
+        <div id="battleFeedbackPanel" class="hidden p-4 rounded-xl bg-slate-900/95 border border-indigo-500/30 flex flex-wrap items-center justify-between gap-3">
+          <p id="battleExplanationText" class="text-sm text-slate-200 flex-1"></p>
+          <button type="button" onclick="nextBattleQuestion()" class="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 font-display font-bold text-xs uppercase tracking-wider">
+            Soal Berikutnya ▶
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Grounded Reference Footer -->
+  <footer class="bg-[#1E1B4B]/90 border-t border-indigo-500/20 py-3 px-4 mt-6">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400">
+      <span>Referensi Teknis Terverifikasi:</span>
+      <div class="flex flex-wrap items-center gap-3">
+        <a href="https://binus.ac.id/malang/computer-science/2024/12/04/media-transmisi-pada-jaringan-komputer/" target="_blank" rel="noopener noreferrer" class="text-indigo-300 hover:text-orange-400 underline">BINUS University (Guided &amp; Unguided)</a>
+        <a href="https://www.nusa.net.id/kb/seputar-pengetahuan-tentang-kabel-jaringan/" target="_blank" rel="noopener noreferrer" class="text-indigo-300 hover:text-orange-400 underline">Nusanet (UTP/STP &amp; Coaxial)</a>
+        <a href="https://www.griyasis.com/kabel-lan-cat-5-6-7-dan-8-mana-yang-harus-dipilih/" target="_blank" rel="noopener noreferrer" class="text-indigo-300 hover:text-orange-400 underline">Griyasis (Cat5e/Cat6/Cat6a)</a>
+        <a href="https://it.telkomuniversity.ac.id/perbedaan-fiber-optik-single-mode-dan-multi-mode/" target="_blank" rel="noopener noreferrer" class="text-indigo-300 hover:text-orange-400 underline">Telkom University (SMF vs MMF)</a>
+        <a href="https://edavos.com/wifi-6-vs-wifi-7/" target="_blank" rel="noopener noreferrer" class="text-indigo-300 hover:text-orange-400 underline">Edavos (Wi-Fi 6 &amp; Wi-Fi 7)</a>
+        <a href="https://www.wallblock.co.id/insight/urutan-warna-kabel-lan" target="_blank" rel="noopener noreferrer" class="text-indigo-300 hover:text-orange-400 underline">Wallblock (Standar RJ-45 T568A/B)</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // =========================================================================
+    // GROUNDED MEDIA DATABASE (100% Backed by Tool Outputs)
+    // =========================================================================
+    const MEDIA_SPECS = {
+      utp_cat5e: {
+        id: 'utp_cat5e',
+        name: 'Kabel UTP Cat5e',
+        category: 'Guided (Tembaga)',
+        signalType: 'Listrik (8 Kawat Berpilin)',
+        maxDist: 100,
+        maxDistLabel: '100 Meter (328 Kaki)',
+        maxSpeedGbps: 1,
+        speedLabel: '1 Gbps (100 MHz)',
+        emiShield: 'low',
+        supportsPoE: true,
+        isWireless: false,
+        color: '#F97316',
+        shortDesc: 'Tanpa foil pelindung, murah & mudah dipasang untuk LAN ruangan <= 100 m.'
+      },
+      stp_cat6a: {
+        id: 'stp_cat6a',
+        name: 'Kabel STP / Cat6a (PoE++)',
+        category: 'Guided (Tembaga Berlapis Foil)',
+        signalType: 'Listrik + Pelindung Foil (PoE 90W)',
+        maxDist: 100,
+        maxDistLabel: '100 Meter (10 Gbps Penuh)',
+        maxSpeedGbps: 10,
+        speedLabel: '10 Gbps (500 MHz + PoE 90W)',
+        emiShield: 'med',
+        supportsPoE: true,
+        isWireless: false,
+        color: '#38BDF8',
+        shortDesc: 'Pelindung foil tahan EMI sedang, laju 10 Gbps hingga 100 m & daya PoE 90W.'
+      },
+      coaxial: {
+        id: 'coaxial',
+        name: 'Kabel Coaxial (10Base2/10Base5)',
+        category: 'Guided (Tembaga Inti Tunggal)',
+        signalType: 'Listrik Frekuensi Tinggi',
+        maxDist: 500,
+        maxDistLabel: '500 Meter',
+        maxSpeedGbps: 0.1,
+        speedLabel: '10 Mbps – 100 Mbps',
+        emiShield: 'med',
+        supportsPoE: false,
+        isWireless: false,
+        color: '#EAB308',
+        shortDesc: 'Inti tembaga berlapis isolator & anyaman logam hingga 500 m; fisik agak kaku.'
+      },
+      fiber_mmf: {
+        id: 'fiber_mmf',
+        name: 'Fiber Optik Multi-Mode (MMF OM4)',
+        category: 'Guided (Serat Kaca 50 µm)',
+        signalType: 'Cahaya LED (850–1300 nm)',
+        maxDist: 550,
+        maxDistLabel: '300 – 550 Meter',
+        maxSpeedGbps: 100,
+        speedLabel: '10 – 100 Gbps',
+        emiShield: 'immune',
+        supportsPoE: false,
+        isWireless: false,
+        color: '#22C55E',
+        shortDesc: 'Inti kaca 50 µm dengan cahaya LED; 100% kebal EMI & petir untuk antar-gedung.'
+      },
+      fiber_smf: {
+        id: 'fiber_smf',
+        name: 'Fiber Optik Single-Mode (SMF)',
+        category: 'Guided (Serat Kaca 9 µm)',
+        signalType: 'Sinar Laser (1310–1550 nm)',
+        maxDist: 50000,
+        maxDistLabel: '10 km – 50 km',
+        maxSpeedGbps: 100,
+        speedLabel: '100+ Gbps Jarak Jauh',
+        emiShield: 'immune',
+        supportsPoE: false,
+        isWireless: false,
+        color: '#10B981',
+        shortDesc: 'Inti kaca 9 µm dengan laser tunggal; menempuh 10–50 km tanpa penguat sinyal.'
+      },
+      wifi_24: {
+        id: 'wifi_24',
+        name: 'Wi-Fi Pita 2,4 GHz (Gelombang Radio)',
+        category: 'Unguided (Nirkabel Omnidirectional)',
+        signalType: 'Gelombang Radio 2,4 GHz',
+        maxDist: 75,
+        maxDistLabel: '~75 Meter (Menembus Tembok)',
+        maxSpeedGbps: 0.3,
+        speedLabel: 'Hingga 300 Mbps',
+        emiShield: 'low',
+        supportsPoE: false,
+        isWireless: true,
+        color: '#A855F7',
+        shortDesc: 'Jangkauan luas & mudah menembus tembok, tetapi rawan padat di ruangan ramai.'
+      },
+      wifi_6_5g: {
+        id: 'wifi_6_5g',
+        name: 'Wi-Fi 6 / Wi-Fi 7 (5 GHz & 6 GHz)',
+        category: 'Unguided (802.11ax / 802.11be)',
+        signalType: 'Gelombang Radio OFDMA & MLO',
+        maxDist: 45,
+        maxDistLabel: '~45 Meter (Area Aula/Ruangan)',
+        maxSpeedGbps: 9.6,
+        speedLabel: '9,6 Gbps (Wi-Fi 6) – 46 Gbps (Wi-Fi 7)',
+        emiShield: 'med',
+        supportsPoE: false,
+        isWireless: true,
+        color: '#6366F1',
+        shortDesc: 'Kecepatan sangat tinggi & latensi turun 75% untuk puluhan HP serentak di aula.'
+      }
+    };
+
+    // =========================================================================
+    // 5 CLASSROOM MISSIONS (Directly Aligned with Slide 10 & Presentation)
+    // =========================================================================
+    const MISSIONS = [
+      {
+        id: 1,
+        badge: 'MISI 1 DARI 5 • TANTANGAN 1 SLIDE 10',
+        title: 'Jalur Ruang Server ke Lab Baru (250 Meter)',
+        desc: 'Sekolah ingin menghubungkan Ruang Server ke Lab Komputer Baru yang berjarak 250 meter melewati halaman luar yang rawan induksi petir. Kecepatan minimal yang dibutuhkan adalah 10 Gbps.',
+        reqDist: '250 Meter',
+        reqSpeed: '≥ 10 Gbps',
+        reqEnv: 'Luar Gedung (EMI Tinggi)',
+        distNum: 250,
+        emiLevel: 'high',
+        bestMedia: ['fiber_mmf', 'fiber_smf'],
+        explainSuccess: 'TEPAT SEKALI! Karena jaraknya 250 meter (melampaui batas 100 m kabel UTP) dan melewati area rawan petir/EMI, Kabel Serat Optik (Multi-Mode 300–550 m atau Single-Mode) menghantarkan cahaya yang 100% kebal gangguan listrik dengan laju 10–100 Gbps.',
+        explainFail: {
+          utp_cat5e: 'GAGAL REDAMAN! Kabel UTP Cat5e hanya sanggup menjangkau maksimal 100 meter. Pada jarak 250 meter, sinyal listrik habis di tengah jalan dan terganggu induksi petir.',
+          stp_cat6a: 'GAGAL JARAK! Meskipun Cat6a tahan EMI sedang dan cepat (10 Gbps), batas jarak kabel tembaga LAN tetap maksimal 100 meter (tidak sampai 250 meter tanpa switch tambahan).',
+          coaxial: 'KURANG CEPAT! Kabel Coaxial memang sanggup mencapai 500 meter, tetapi kecepatannya hanya 10–100 Mbps (tidak memenuhi target 10 Gbps Lab Komputer).',
+          wifi_24: 'TIDAK STABIL! Sinyal Wi-Fi 2,4 GHz tidak sanggup menempuh 250 meter dengan kecepatan 10 Gbps untuk backbone laboratorium.',
+          wifi_6_5g: 'JARAK TERLALU JAUH! Pita 5 GHz/6 GHz dirancang untuk akses ruangan/aula dekat (~45 m), bukan kabel penghubung utama antar-gedung 250 meter.'
+        }
+      },
+      {
+        id: 2,
+        badge: 'MISI 2 DARI 5 • TANTANGAN 2 SLIDE 10',
+        title: 'Koneksi Serentak 50 HP Siswa di Aula Sekolah',
+        desc: 'Di dalam Aula Sekolah (jarak jangkau 30 meter tanpa sekat), 50 siswa perlu menghubungkan smartphone dan laptop mereka secara bersamaan tanpa menarik kabel ke kursi masing-masing.',
+        reqDist: '30 Meter (Aula)',
+        reqSpeed: 'Multi-Perangkat Cepat',
+        reqEnv: 'Mobilitas Tinggi (50 HP)',
+        distNum: 30,
+        emiLevel: 'med',
+        bestMedia: ['wifi_6_5g'],
+        explainSuccess: 'LUAR BIASA! Standar Wi-Fi 6 (IEEE 802.11ax, hingga 9,6 Gbps) dan Wi-Fi 7 pada frekuensi 5 GHz/6 GHz memiliki teknologi OFDMA dan MU-MIMO yang melayani puluhan HP serentak dengan penurunan latensi hingga 75%.',
+        explainFail: {
+          utp_cat5e: 'TIDAK PRAKTIS! Smartphone tidak memiliki port RJ-45 dan menarik 50 kabel UTP ke kursi aula akan menghambat mobilitas siswa.',
+          stp_cat6a: 'KURANG TEPAT! Kabel Cat6a dipakai dari switch ke Access Point di langit-langit, tetapi untuk memancarkan internet ke 50 HP siswa tetap dibutuhkan gelombang Wi-Fi 6/7.',
+          coaxial: 'SALAH MEDIA! Kabel Coaxial digunakan untuk antena TV kabel, bukan untuk menghubungkan 50 smartphone secara nirkabel.',
+          fiber_mmf: 'SALAH MEDIA! Kabel kaca Fiber Optik tidak bisa dicolokkan langsung ke HP siswa yang bergerak bebas di aula.',
+          fiber_smf: 'SALAH MEDIA! Single-Mode Fiber adalah kabel backbone antar-kota, bukan pemancar nirkabel untuk HP di aula.',
+          wifi_24: 'RAWAN MACET! Pita 2,4 GHz memiliki kapasitas kanal sempit dan kecepatan lebih rendah sehingga akan tersendat saat diakses 50 HP serentak.'
+        }
+      },
+      {
+        id: 3,
+        badge: 'MISI 3 DARI 5 • INSTALASI HEMAT BIAYA',
+        title: 'Menghubungkan 20 PC Meja di Dalam Satu Ruang Lab',
+        desc: 'Sekolah ingin menghubungkan 20 komputer meja (PC Desktop) ke switch di dalam satu ruang laboratorium yang sama (jarak kabel rata-rata 25 meter) dengan anggaran paling hemat dan kecepatan 1 Gbps.',
+        reqDist: '25 Meter',
+        reqSpeed: '1 Gbps Stabil',
+        reqEnv: 'Dalam Ruangan Aman',
+        distNum: 25,
+        emiLevel: 'low',
+        bestMedia: ['utp_cat5e', 'stp_cat6a'],
+        explainSuccess: 'SOLUSI CERDAS! Untuk jarak pendek 25 meter (di bawah batas 100 m) di dalam ruangan yang aman dari gangguan listrik berat, Kabel Twisted Pair (UTP Cat5e / Cat6) adalah pilihan paling ekonomis, mudah dipasang dengan RJ-45, dan stabil di 1–10 Gbps.',
+        explainFail: {
+          coaxial: 'KURANG OPTIMAL! Kabel Coaxial kaku dan kecepatannya terbatas 10–100 Mbps, kalah cepat dibanding UTP Cat5e (1 Gbps).',
+          fiber_mmf: 'PEMBOROSAN ANGGARAN! Memasang serat optik ke tiap PC meja berjarak 25 meter membutuhkan biaya transceiver optik yang mahal.',
+          fiber_smf: 'TERLALU MAHAL! Single-Mode Laser dirancang untuk jarak 10–50 km, bukan untuk kabel meja 25 meter di dalam ruangan.',
+          wifi_24: 'KURANG STABIL! Untuk PC meja tetap di laboratorium ujian, kabel LAN jauh lebih stabil dan bebas interferensi dibanding Wi-Fi 2,4 GHz.',
+          wifi_6_5g: 'KURANG HEMAT! PC Desktop tetap tidak berpindah-pindah, sehingga menggunakan kabel UTP jauh lebih murah dan stabil.'
+        }
+      },
+      {
+        id: 4,
+        badge: 'MISI 4 DARI 5 • JARINGAN ANTAR-KOTA',
+        title: 'Jalur Tulang Punggung (Backbone) Antar-Kampus 15 KM',
+        desc: 'Sebuah universitas ingin menghubungkan Kampus Utama dengan Kampus Cabang yang berjarak 15 kilometer (15.000 meter) melintasi kota tanpa penguat sinyal di tengah jalan.',
+        reqDist: '15.000 Meter (15 km)',
+        reqSpeed: '100 Gbps Backbone',
+        reqEnv: 'Lintas Kota Jarak Jauh',
+        distNum: 15000,
+        emiLevel: 'high',
+        bestMedia: ['fiber_smf'],
+        explainSuccess: 'SEMPURNA! Hanya Serat Optik Single-Mode (SMF) dengan diameter inti 9 mikrometer dan satu jalur sinar laser (1310–1550 nm) yang mampu menempuh jarak 10 km hingga 50 km tanpa penguat sinyal (repeater).',
+        explainFail: {
+          utp_cat5e: 'SINYAL HABIS TOTAL! Kabel UTP hanya mampu menjangkau 100 meter (kurang dari 1% jarak 15 km).',
+          stp_cat6a: 'SINYAL HABIS TOTAL! Batas fisik kabel tembaga Cat6a tetap 100 meter.',
+          coaxial: 'TIDAK SAMPAI! Kabel Coaxial maksimal hanya menjangkau 500 meter sebelum sinyal teredam habis.',
+          fiber_mmf: 'JARAK TIDAK CUKUP! Fiber Multi-Mode (MMF 50 µm dengan cahaya LED) mengalami distorsi pantulan cahaya di atas 550 meter, sehingga tidak sanggup mencapai 15 km.',
+          wifi_24: 'TIDAK MUNGKIN! Wi-Fi ruangan hanya menjangkau puluhan meter.',
+          wifi_6_5g: 'TIDAK MUNGKIN! Wi-Fi 5 GHz/6 GHz hanya menjangkau area ruangan (~45 m).'
+        }
+      },
+      {
+        id: 5,
+        badge: 'MISI 5 DARI 5 • INFRASTRUKTUR MODERN PoE++',
+        title: 'Kabel Backhaul Access Point Wi-Fi 7 di Langit-Langit (75 Meter)',
+        desc: 'Anda memasang perangkat pemancar Wi-Fi 7 di langit-langit lorong lantai 3 yang berjarak 75 meter dari switch. Tidak ada colokan listrik di plafon, sehingga kabel harus menyalurkan data 10 Gbps sekaligus listrik PoE++ 90 Watt.',
+        reqDist: '75 Meter',
+        reqSpeed: '10 Gbps + Listrik PoE 90W',
+        reqEnv: 'Plafon Gedung (Tanpa Stopkontak)',
+        distNum: 75,
+        emiLevel: 'med',
+        bestMedia: ['stp_cat6a'],
+        explainSuccess: 'TEPAT 100%! Kabel Cat6a mendukung kecepatan penuh 10 Gbps hingga jarak 100 meter (sedangkan Cat6 biasa turun ke 1 Gbps di atas 55 m) DAN konduktor tembaganya mampu menyalurkan daya listrik PoE++ (IEEE 802.3bt) hingga 90 Watt!',
+        explainFail: {
+          utp_cat5e: 'KECEPATAN KURANG! Cat5e hanya mendukung maksimal 1 Gbps, sehingga akan menghambat kecepatan Access Point Wi-Fi 7 yang butuh 10 Gbps.',
+          coaxial: 'TIDAK MENDUKUNG RJ-45 & 10G! Coaxial tidak mendukung standar Ethernet 10 Gbps maupun PoE++ ke Access Point modern.',
+          fiber_mmf: 'TIDAK BISA MENGALIRKAN LISTRIK! Serat optik terbuat dari kaca sehingga tidak bisa menghantarkan arus listrik PoE 90 Watt untuk menyalakan Access Point di plafon.',
+          fiber_smf: 'TIDAK BISA MENGALIRKAN LISTRIK! Karena berbahan serat kaca, SMF tidak dapat menyalurkan daya listrik PoE ke perangkat.',
+          wifi_24: 'BUTUH KABEL PENYedia DAYA! Access Point di plafon tetap membutuhkan kabel fisik untuk pasokan listrik PoE dan backhaul data.',
+          wifi_6_5g: 'BUTUH KABEL BACKHAUL! Sebelum bisa memancarkan Wi-Fi, unit Access Point di plafon harus dihubungkan ke switch dan diberi daya listrik lewat kabel.'
+        }
+      }
+    ];
+
+    // =========================================================================
+    // 6 BATTLE QUIZ QUESTIONS (Tim Kabel vs Tim Nirkabel)
+    // =========================================================================
+    const BATTLE_QUESTIONS = [
+      {
+        q: 'Berapakah batas jarak efektif maksimum kabel Twisted Pair (UTP Cat5e/Cat6/Cat6a) tanpa penguat sinyal (repeater/switch)?',
+        options: ['55 Meter', '100 Meter (328 Kaki)', '500 Meter', '1.000 Meter (1 KM)'],
+        answer: 1,
+        explain: 'Standar saluran Ethernet tembaga (IEEE 802.3 / TIA-568) menetapkan batas jarak efektif maksimum 100 meter (328 kaki) sebelum sinyal mengalami redaman.'
+      },
+      {
+        q: 'Mengapa kabel Serat Optik (Fiber Optic) 100% kebal terhadap gangguan elektromagnetik (EMI) dan sambaran petir?',
+        options: [
+          'Karena dibungkus tiga lapis karet tebal',
+          'Karena mengirim data berupa sinyal cahaya di dalam serat kaca, bukan arus listrik',
+          'Karena menggunakan frekuensi radio 5 GHz',
+          'Karena memiliki 8 kawat tembaga yang dipilin rapat'
+        ],
+        answer: 1,
+        explain: 'Serat optik mentransmisikan gelombang cahaya (laser atau LED) melalui inti kaca silika murni sehingga sama sekali tidak terpengaruh induksi medan listrik maupun magnet.'
+      },
+      {
+        q: 'Apa perbedaan utama antara serat optik Single-Mode (SMF) dan Multi-Mode (MMF)?',
+        options: [
+          'SMF berinti kecil (9 µm) dengan sinar laser untuk jarak hingga 50 km; MMF berinti lebih besar (50 µm) dengan LED untuk jarak 300–550 m',
+          'SMF terbuat dari tembaga sedangkan MMF terbuat dari plastik',
+          'MMF mampu menjangkau 100 km sedangkan SMF hanya 100 meter',
+          'SMF hanya mendukung kecepatan 10 Mbps'
+        ],
+        answer: 0,
+        explain: 'Single-Mode (SMF) memiliki diameter core ±9 mikrometer dan memakai laser untuk jarak puluhan km, sedangkan Multi-Mode (MMF) berdiameter 50–62,5 mikrometer dengan LED untuk jarak pendek di dalam gedung/Data Center.'
+      },
+      {
+        q: 'Kabel Ethernet manakah yang sanggup mempertahankan kecepatan penuh 10 Gbps hingga jarak 100 meter sekaligus menyalurkan daya PoE++ 90W?',
+        options: ['Kabel Coaxial 10Base2', 'Kabel UTP Cat5', 'Kabel Cat6a (500 MHz)', 'Gelombang Inframerah'],
+        answer: 2,
+        explain: 'Kabel Cat6 standar hanya mendukung 10 Gbps hingga sekitar 55 meter, sedangkan Cat6a mampu menjaga kecepatan 10 Gbps penuh hingga 100 meter.'
+      },
+      {
+        q: 'Manakah karakteristik yang tepat mengenai pita frekuensi Wi-Fi 2,4 GHz dibandingkan 5 GHz?',
+        options: [
+          '2,4 GHz lebih mudah menembus tembok dan menjangkau lebih jauh, tetapi kecepatannya lebih rendah dibanding 5 GHz',
+          '2,4 GHz memiliki kecepatan 46 Gbps tetapi tidak bisa menembus tembok',
+          '5 GHz hanya digunakan untuk remote TV jarak 2 meter',
+          '2,4 GHz membutuhkan kabel serat kaca untuk merambat di udara'
+        ],
+        answer: 0,
+        explain: 'Gelombang 2,4 GHz memiliki panjang gelombang lebih besar sehingga lebih tahan halangan tembok, sedangkan 5 GHz/6 GHz (Wi-Fi 6/7) jauh lebih cepat namun jangkauannya lebih pendek.'
+      },
+      {
+        q: 'Di sekolah atau gedung perkantoran modern, bagaimana arsitektur jaringan yang paling tepat diterapkan?',
+        options: [
+          'Hanya menggunakan Wi-Fi saja tanpa kabel sama sekali dari ISP',
+          'Hanya menggunakan kabel Coaxial untuk semua smartphone',
+          'Arsitektur Hibrida: Fiber Optik untuk jalur antar-gedung, kabel UTP Cat6/Cat6a untuk PC & PoE Access Point, serta Wi-Fi untuk perangkat bergerak',
+          'Menggunakan gelombang inframerah untuk menghubungkan gedung sejauh 10 km'
+        ],
+        answer: 2,
+        explain: 'Jaringan dunia nyata selalu bersifat hibrida: memadukan keandalan serat optik & tembaga sebagai tulang punggung (backbone) dengan fleksibilitas Wi-Fi untuk perangkat pengguna.'
+      }
+    ];
+
+    // =========================================================================
+    // APPLICATION STATE & WEB AUDIO SYNTHESIZER
+    // =========================================================================
+    let currentTab = 'arcade';
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    // Mission State
+    let currentMissionIdx = 0;
+    let selectedMediaId = 'utp_cat5e';
+    let missionScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    let animPackets = [];
+    let lastTestOutcome = null; // null | 'success' | 'fail'
+
+    // Lab State
+    let labEmi = 'low';
+    let labWall = false;
+    let labPhase = 0;
+
+    // Battle Quiz State
+    let battleIdx = 0;
+    let activeTeam = 'A'; // 'A' or 'B'
+    let scoreA = 0;
+    let scoreB = 0;
+    let battleAnswered = false;
+
+    function playTone(type) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) audioCtx = new AudioContextClass();
+        }
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(680, now + 0.06);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+          osc.start(now);
+          osc.stop(now + 0.07);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.09);
+          osc.frequency.setValueAtTime(783.99, now + 0.18);
+          gain.gain.setValueAtTime(0.14, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'fail') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(240, now);
+          osc.frequency.linearRampToValueAtTime(140, now + 0.28);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        }
+      } catch (e) {
+        // Ignore audio errors on restricted devices
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundIcon').textContent = soundEnabled ? '🔊' : '🔇';
+      document.getElementById('soundLabel').textContent = soundEnabled ? 'Suara Aktif' : 'Suara Mati';
+      if (soundEnabled) playTone('click');
+    }
+
+    function switchTab(tab) {
+      playTone('click');
+      currentTab = tab;
+      const tabs = ['arcade', 'mission', 'lab', 'battle'];
+      tabs.forEach(t => {
+        const viewEl = document.getElementById('view' + t.charAt(0).toUpperCase() + t.slice(1));
+        const btnEl = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (t === tab) {
+          viewEl.classList.remove('hidden');
+          btnEl.classList.add('tab-btn-active');
+        } else {
+          viewEl.classList.add('hidden');
+          btnEl.classList.remove('tab-btn-active');
+        }
+      });
+      resizeCanvases();
+      if (tab === 'lab') updateLabSimulation();
+    }
+
+    // =========================================================================
+    // MISSION VIEW LOGIC
+    // =========================================================================
+    function renderMissionStepper() {
+      const container = document.getElementById('missionStepper');
+      container.innerHTML = '';
+      MISSIONS.forEach((m, idx) => {
+        const solved = missionScores[m.id] > 0;
+        const isCurrent = idx === currentMissionIdx;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ' +
+          (isCurrent
+            ? 'bg-orange-500 text-slate-950 border-orange-300 shadow'
+            : solved
+              ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
+              : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800');
+        btn.innerHTML = `<span>Misi ${m.id}</span><span>${solved ? '✅' : '⚪'}</span>`;
+        btn.addEventListener('click', () => {
+          playTone('click');
+          currentMissionIdx = idx;
+          lastTestOutcome = null;
+          loadCurrentMission();
+        });
+        container.appendChild(btn);
+      });
+
+      const totalScore = Object.values(missionScores).reduce((a, b) => a + b, 0);
+      document.getElementById('headerScore').textContent = `${totalScore} / 500`;
+    }
+
+    function renderMediaPicker() {
+      const grid = document.getElementById('missionMediaGrid');
+      grid.innerHTML = '';
+      Object.values(MEDIA_SPECS).forEach(spec => {
+        const active = spec.id === selectedMediaId;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'text-left p-2.5 rounded-xl border transition flex flex-col justify-between ' +
+          (active
+            ? 'media-btn-active border-orange-500'
+            : 'bg-slate-900/80 border-slate-700/80 hover:border-indigo-400');
+        btn.innerHTML = `
+          <div class="flex items-center justify-between gap-1">
+            <span class="font-bold text-xs text-white">${spec.name}</span>
+            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${spec.color}"></span>
+          </div>
+          <span class="text-[11px] text-slate-400 mt-1">${spec.maxDistLabel} • ${spec.speedLabel}</span>
+        `;
+        btn.addEventListener('click', () => {
+          playTone('click');
+          selectedMediaId = spec.id;
+          lastTestOutcome = null;
+          renderMediaPicker();
+          updateMissionPreviewMetrics();
+        });
+        grid.appendChild(btn);
+      });
+    }
+
+    function updateMissionPreviewMetrics() {
+      const spec = MEDIA_SPECS[selectedMediaId];
+      document.getElementById('metricSignalType').textContent = spec.signalType;
+      document.getElementById('metricMaxDist').textContent = spec.maxDistLabel;
+      document.getElementById('metricSignalQuality').textContent = 'Siap Uji';
+      document.getElementById('metricThroughput').textContent = spec.speedLabel;
+      document.getElementById('canvasSubtitle').textContent = `Media terpilih: ${spec.name} — Klik "Uji Kirim Paket Data Sekarang!"`;
+    }
+
+    function loadCurrentMission() {
+      const m = MISSIONS[currentMissionIdx];
+      document.getElementById('missionBadge').textContent = m.badge;
+      document.getElementById('missionTitle').textContent = m.title;
+      document.getElementById('missionDesc').textContent = m.desc;
+      document.getElementById('missionReqDist').textContent = m.reqDist;
+      document.getElementById('missionReqSpeed').textContent = m.reqSpeed;
+      document.getElementById('missionReqEnv').textContent = m.reqEnv;
+
+      const solved = missionScores[m.id] > 0;
+      const pill = document.getElementById('missionStatusPill');
+      if (solved) {
+        pill.textContent = '✅ Selesai (+100 Poin)';
+        pill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+      } else {
+        pill.textContent = 'Belum Diselesaikan';
+        pill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300';
+      }
+
+      renderMissionStepper();
+      renderMediaPicker();
+      updateMissionPreviewMetrics();
+
+      const fbBox = document.getElementById('missionFeedbackBox');
+      fbBox.className = 'card-glass rounded-2xl p-4 border-l-4 border-l-indigo-500';
+      document.getElementById('feedbackHeadline').className = 'font-display font-bold text-base text-indigo-300';
+      document.getElementById('feedbackHeadline').textContent = 'Analisis Teknis Media Transmisi:';
+      document.getElementById('feedbackBody').textContent = 'Pilih salah satu media transmisi di sebelah kiri lalu tekan tombol "Uji Kirim Paket Data Sekarang!" untuk melihat simulasi perambatan sinyal dan pembahasannya.';
+    }
+
+    function changeMission(delta) {
+      playTone('click');
+      currentMissionIdx = (currentMissionIdx + delta + MISSIONS.length) % MISSIONS.length;
+      lastTestOutcome = null;
+      loadCurrentMission();
+    }
+
+    function resetAllMissions() {
+      playTone('click');
+      missionScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      lastTestOutcome = null;
+      loadCurrentMission();
+    }
+
+    function runMissionTest() {
+      const m = MISSIONS[currentMissionIdx];
+      const spec = MEDIA_SPECS[selectedMediaId];
+      const isSuccess = m.bestMedia.includes(selectedMediaId);
+
+      lastTestOutcome = isSuccess ? 'success' : 'fail';
+      if (isSuccess) {
+        missionScores[m.id] = 100;
+        playTone('success');
+      } else {
+        playTone('fail');
+      }
+
+      // Spawn animated packets on canvas
+      animPackets = [];
+      for (let i = 0; i < 8; i++) {
+        animPackets.push({
+          progress: -i * 0.12,
+          speed: 0.012,
+          alive: true
+        });
+      }
+
+      // Update Telemetry & Feedback
+      const qualityEl = document.getElementById('metricSignalQuality');
+      const tpEl = document.getElementById('metricThroughput');
+      const fbBox = document.getElementById('missionFeedbackBox');
+      const fbHead = document.getElementById('feedbackHeadline');
+      const fbBody = document.getElementById('feedbackBody');
+
+      if (isSuccess) {
+        qualityEl.textContent = '98% (Valid)';
+        qualityEl.className = 'font-bold text-xs sm:text-sm text-emerald-400';
+        tpEl.textContent = spec.speedLabel;
+        fbBox.className = 'card-glass rounded-2xl p-4 border-l-4 border-l-emerald-400 bg-emerald-950/30';
+        fbHead.className = 'font-display font-bold text-base text-emerald-300';
+        fbHead.textContent = '✅ TRANSMISI BERHASIL (+100 POIN)!';
+        fbBody.textContent = m.explainSuccess;
+      } else {
+        const ratio = Math.min(1, spec.maxDist / Math.max(1, m.distNum));
+        const pct = Math.max(5, Math.round(ratio * 45));
+        qualityEl.textContent = `${pct}% (Invalid/Loss)`;
+        qualityEl.className = 'font-bold text-xs sm:text-sm text-rose-400';
+        tpEl.textContent = 'Terputus / Drop';
+        fbBox.className = 'card-glass rounded-2xl p-4 border-l-4 border-l-rose-500 bg-rose-950/30';
+        fbHead.className = 'font-display font-bold text-base text-rose-300';
+        fbHead.textContent = '⚠️ TRANSMISI GAGAL / TIDAK OPTIMAL!';
+        fbBody.textContent = m.explainFail[selectedMediaId] || 'Media ini tidak memenuhi syarat jarak atau kecepatan skenario.';
+      }
+
+      renderMissionStepper();
+      const pill = document.getElementById('missionStatusPill');
+      if (missionScores[m.id] > 0) {
+        pill.textContent = '✅ Selesai (+100 Poin)';
+        pill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+      }
+    }
+
+    // =========================================================================
+    // LAB SIMULATOR LOGIC
+    // =========================================================================
+    function setLabDistance(val) {
+      playTone('click');
+      const slider = document.getElementById('labDistSlider');
+      slider.value = val;
+      updateLabSimulation();
+    }
+
+    function setLabEmi(level) {
+      playTone('click');
+      labEmi = level;
+      ['low', 'med', 'high'].forEach(l => {
+        const btn = document.getElementById('emiBtn' + l.charAt(0).toUpperCase() + l.slice(1));
+        if (l === level) {
+          btn.className = 'py-2 rounded-lg text-xs font-bold bg-indigo-600 text-white border border-indigo-400';
+        } else {
+          btn.className = 'py-2 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700';
+        }
+      });
+      updateLabSimulation();
+    }
+
+    function toggleLabWall() {
+      playTone('click');
+      labWall = !labWall;
+      const btn = document.getElementById('wallToggleBtn');
+      if (labWall) {
+        btn.textContent = '🧱 Ada Tembok Beton';
+        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 border border-amber-300';
+      } else {
+        btn.textContent = 'Tanpa Tembok';
+        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 border border-slate-600';
+      }
+      updateLabSimulation();
+    }
+
+    function computeLabMetrics() {
+      const mediaId = document.getElementById('labMediaSelect').value;
+      const dist = parseFloat(document.getElementById('labDistSlider').value) || 60;
+      const spec = MEDIA_SPECS[mediaId];
+
+      let distLoss = 0;
+      if (dist <= spec.maxDist) {
+        distLoss = (dist / spec.maxDist) * 14;
+      } else {
+        const overRatio = (dist - spec.maxDist) / spec.maxDist;
+        distLoss = 14 + Math.min(86, overRatio * 75 + 25);
+      }
+
+      let emiLoss = 0;
+      if (spec.emiShield === 'immune') {
+        emiLoss = 0;
+      } else if (spec.emiShield === 'med') {
+        emiLoss = labEmi === 'high' ? 22 : labEmi === 'med' ? 8 : 2;
+      } else {
+        emiLoss = labEmi === 'high' ? 48 : labEmi === 'med' ? 22 : 4;
+      }
+
+      let wallLoss = 0;
+      if (labWall && spec.isWireless) {
+        wallLoss = mediaId === 'wifi_24' ? 18 : 38;
+      }
+
+      const totalLoss = Math.min(100, Math.round(distLoss + emiLoss + wallLoss));
+      const strength = Math.max(0, 100 - totalLoss);
+      const effSpeed = strength < 30 ? 0 : +(spec.maxSpeedGbps * (strength / 100)).toFixed(2);
+
+      return { spec, dist, strength, totalLoss, effSpeed };
+    }
+
+    function updateLabSimulation() {
+      const { spec, dist, strength, totalLoss, effSpeed } = computeLabMetrics();
+      document.getElementById('labDistLabel').textContent = dist >= 1000 ? `${(dist / 1000).toFixed(1)} km (${dist} m)` : `${dist} Meter`;
+      document.getElementById('labStrengthVal').textContent = `${strength}%`;
+      document.getElementById('labLossVal').textContent = `${totalLoss}%`;
+
+      if (effSpeed === 0) {
+        document.getElementById('labSpeedVal').textContent = '0 Mbps (Putus)';
+      } else if (effSpeed < 1) {
+        document.getElementById('labSpeedVal').textContent = `${Math.round(effSpeed * 1000)} Mbps`;
+      } else {
+        document.getElementById('labSpeedVal').textContent = `${effSpeed} Gbps`;
+      }
+
+      const badge = document.getElementById('labStatusBadge');
+      const analysis = document.getElementById('labAnalysisText');
+
+      if (strength >= 70) {
+        badge.textContent = 'STATUS: VALID (SINYAL STABIL)';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+        document.getElementById('labStrengthVal').className = 'font-display font-bold text-lg text-emerald-400';
+      } else if (strength >= 35) {
+        badge.textContent = 'STATUS: REDAMAN SEDANG (RAWAN DELAY)';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        document.getElementById('labStrengthVal').className = 'font-display font-bold text-lg text-amber-300';
+      } else {
+        badge.textContent = 'STATUS: INVALID (SINYAL TERPUTUS)';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40';
+        document.getElementById('labStrengthVal').className = 'font-display font-bold text-lg text-rose-400';
+      }
+
+      let msg = `<strong>${spec.name}:</strong> `;
+      if (dist > spec.maxDist) {
+        msg += `Jarak uji (${dist} m) melampaui batas efektif media ini (${spec.maxDistLabel}), sehingga sinyal mengalami redaman parah (attenuation). `;
+      } else {
+        msg += `Jarak uji (${dist} m) masih berada di dalam batas aman (${spec.maxDistLabel}). `;
+      }
+      if (spec.emiShield === 'immune') {
+        msg += `Karena menggunakan cahaya di dalam serat kaca (cladding 125 µm), sinyal <strong>100% kebal terhadap gangguan EMI/petir</strong>.`;
+      } else if (labEmi === 'high') {
+        msg += `Gangguan EMI tinggi mengganggu sinyal pada konduktor tembaga/radio.`;
+      }
+      if (labWall && spec.isWireless) {
+        msg += mediaIdWallNote(spec.id);
+      }
+      analysis.innerHTML = msg;
+    }
+
+    function mediaIdWallNote(id) {
+      if (id === 'wifi_24') {
+        return ' Pita 2,4 GHz mampu menembus tembok beton dengan redaman moderat.';
+      }
+      return ' Frekuensi tinggi 5 GHz/6 GHz lebih cepat teredam oleh dinding beton tebal dibanding 2,4 GHz.';
+    }
+
+    // =========================================================================
+    // BATTLE QUIZ 2 TIM LOGIC
+    // =========================================================================
+    function renderBattleQuestion() {
+      const item = BATTLE_QUESTIONS[battleIdx];
+      battleAnswered = false;
+      document.getElementById('battleProgressText').textContent = `Soal ${battleIdx + 1} dari ${BATTLE_QUESTIONS.length}`;
+      document.getElementById('battleQuestionText').textContent = item.q;
+      document.getElementById('battleFeedbackPanel').classList.add('hidden');
+
+      updateTeamCardsUI();
+
+      const grid = document.getElementById('battleOptionsGrid');
+      grid.innerHTML = '';
+      item.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'p-4 rounded-xl bg-slate-900/90 hover:bg-indigo-950/80 border border-slate-700 hover:border-indigo-400 text-left text-sm font-medium text-slate-100 transition flex items-start gap-3';
+        const letter = String.fromCharCode(65 + idx);
+        btn.innerHTML = `<span class="w-6 h-6 rounded-lg bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 font-bold text-xs flex items-center justify-center shrink-0">${letter}</span><span>${opt}</span>`;
+        btn.addEventListener('click', () => handleBattleAnswer(idx, btn));
+        grid.appendChild(btn);
+      });
+    }
+
+    function updateTeamCardsUI() {
+      const cardA = document.getElementById('teamCardA');
+      const cardB = document.getElementById('teamCardB');
+      const indicator = document.getElementById('battleTurnIndicator');
+
+      document.getElementById('scoreTeamA').textContent = scoreA;
+      document.getElementById('scoreTeamB').textContent = scoreB;
+
+      if (activeTeam === 'A') {
+        cardA.className = 'card-glass rounded-2xl p-4 border-2 border-indigo-400 flex items-center justify-between shadow-lg';
+        cardB.className = 'card-glass rounded-2xl p-4 border-2 border-transparent opacity-75 flex items-center justify-between';
+        indicator.textContent = 'Giliran Menjawab: 🔌 Tim Kabel (Guided)';
+        indicator.className = 'px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40';
+      } else {
+        cardB.className = 'card-glass rounded-2xl p-4 border-2 border-orange-400 flex items-center justify-between shadow-lg';
+        cardA.className = 'card-glass rounded-2xl p-4 border-2 border-transparent opacity-75 flex items-center justify-between';
+        indicator.textContent = 'Giliran Menjawab: 📡 Tim Nirkabel (Unguided)';
+        indicator.className = 'px-3 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-300 border border-orange-500/40';
+      }
+    }
+
+    function handleBattleAnswer(selectedIdx, clickedBtn) {
+      if (battleAnswered) return;
+      battleAnswered = true;
+      const item = BATTLE_QUESTIONS[battleIdx];
+      const isCorrect = selectedIdx === item.answer;
+
+      if (isCorrect) {
+        playTone('success');
+        if (activeTeam === 'A') scoreA += 100;
+        else scoreB += 100;
+        clickedBtn.className = 'p-4 rounded-xl bg-emerald-950/90 border-2 border-emerald-400 text-left text-sm font-bold text-emerald-200 flex items-start gap-3';
+      } else {
+        playTone('fail');
+        clickedBtn.className = 'p-4 rounded-xl bg-rose-950/90 border-2 border-rose-500 text-left text-sm font-bold text-rose-200 flex items-start gap-3';
+      }
+
+      updateTeamCardsUI();
+      const fbPanel = document.getElementById('battleFeedbackPanel');
+      fbPanel.classList.remove('hidden');
+      document.getElementById('battleExplanationText').innerHTML =
+        (isCorrect ? '<strong class="text-emerald-400">✅ BENAR (+100 Poin)!</strong> ' : '<strong class="text-rose-400">❌ KURANG TEPAT!</strong> ') +
+        item.explain;
+    }
+
+    function nextBattleQuestion() {
+      playTone('click');
+      activeTeam = activeTeam === 'A' ? 'B' : 'A';
+      battleIdx = (battleIdx + 1) % BATTLE_QUESTIONS.length;
+      renderBattleQuestion();
+    }
+
+    function switchTurn() {
+      playTone('click');
+      activeTeam = activeTeam === 'A' ? 'B' : 'A';
+      updateTeamCardsUI();
+    }
+
+    function resetBattleQuiz() {
+      playTone('click');
+      battleIdx = 0;
+      scoreA = 0;
+      scoreB = 0;
+      activeTeam = 'A';
+      renderBattleQuestion();
+    }
+
+    // =========================================================================
+    // HTML5 CANVAS ANIMATION LOOP (Mission & Lab Canvases)
+    // =========================================================================
+    function resizeCanvases() {
+      ['crimpCanvas', 'runnerCanvas', 'missionCanvas', 'labCanvas'].forEach(id => {
+        const c = document.getElementById(id);
+        if (!c || !c.parentElement) return;
+        const rect = c.parentElement.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          c.width = rect.width;
+          c.height = rect.height;
+        }
+      });
+      drawWheelCanvas();
+    }
+
+    function drawMissionCanvas() {
+      const c = document.getElementById('missionCanvas');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      const w = c.width;
+      const h = c.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const m = MISSIONS[currentMissionIdx];
+      const spec = MEDIA_SPECS[selectedMediaId];
+      const padX = Math.max(55, w * 0.12);
+      const startX = padX;
+      const endX = w - padX;
+      const midY = h * 0.52;
+
+      // Subtle grid lines
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.1)';
+      ctx.lineWidth = 1;
+      for (let gx = 0; gx < w; gx += 40) {
+        ctx.beginPath();
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, h);
+        ctx.stroke();
+      }
+
+      // Draw Medium Conduit (Cable or Wireless Waves)
+      if (!spec.isWireless) {
+        ctx.strokeStyle = spec.color;
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(startX, midY);
+        ctx.lineTo(endX, midY);
+        ctx.stroke();
+
+        // Inner core glow for fiber
+        if (spec.id.startsWith('fiber')) {
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(startX, midY);
+          ctx.lineTo(endX, midY);
+          ctx.stroke();
+        }
+      } else {
+        // Wireless expanding arcs
+        ctx.strokeStyle = spec.color;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(startX, midY);
+        ctx.lineTo(endX, midY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // EMI Interference Lightning Visual if environment has high EMI
+      if (m.emiLevel === 'high') {
+        const emiX = (startX + endX) * 0.5;
+        ctx.fillStyle = spec.emiShield === 'immune' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.22)';
+        ctx.beginPath();
+        ctx.arc(emiX, midY, 38, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = spec.emiShield === 'immune' ? '#4ADE80' : '#F87171';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(spec.emiShield === 'immune' ? '⚡ Kebal EMI (Kaca)' : '⚡ Zona EMI / Petir', emiX, midY - 46);
+      }
+
+      // Draw Animated Packets
+      animPackets.forEach(pkt => {
+        pkt.progress += pkt.speed;
+        if (pkt.progress > 1.05) pkt.progress = -0.1;
+        if (pkt.progress < 0) return;
+
+        const px = startX + (endX - startX) * pkt.progress;
+        let py = midY;
+        if (spec.isWireless) {
+          py = midY + Math.sin(pkt.progress * Math.PI * 6) * 14;
+        }
+
+        // If test failed, fade/drop packet around 55% of path
+        const failedMidway = lastTestOutcome === 'fail' && pkt.progress > 0.52;
+        ctx.fillStyle = failedMidway ? '#EF4444' : '#34D399';
+        const radius = failedMidway ? Math.max(2, 7 * (1 - pkt.progress)) : 7;
+
+        ctx.beginPath();
+        ctx.arc(px, py, radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Draw Sender & Receiver Nodes
+      ctx.fillStyle = '#1E1B4B';
+      ctx.strokeStyle = '#6366F1';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.roundRect(startX - 42, midY - 26, 84, 52, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.roundRect(endX - 42, midY - 26, 84, 52, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('PENGIRIM', startX, midY - 3);
+      ctx.fillStyle = '#94A3B8';
+      ctx.font = '10px Inter, sans-serif';
+      ctx.fillText('(Server/AP)', startX, midY + 13);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillText('PENERIMA', endX, midY - 3);
+      ctx.fillStyle = '#94A3B8';
+      ctx.font = '10px Inter, sans-serif';
+      ctx.fillText(`(${m.reqDist})`, endX, midY + 13);
+    }
+
+    function drawLabCanvas() {
+      const c = document.getElementById('labCanvas');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      const w = c.width;
+      const h = c.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const { spec, strength } = computeLabMetrics();
+      labPhase += 0.09;
+
+      const midY = h * 0.5;
+      const startX = 40;
+      const endX = w - 40;
+
+      // Baseline
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(startX, midY);
+      ctx.lineTo(endX, midY);
+      ctx.stroke();
+
+      // Wall obstacle visual if active
+      if (labWall) {
+        const wallX = w * 0.5;
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.28)';
+        ctx.fillRect(wallX - 8, 25, 16, h - 50);
+        ctx.fillStyle = '#FBBF24';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🧱 Tembok Beton', wallX, 18);
+      }
+
+      // Draw Continuous Wave with Attenuation & EMI Noise
+      ctx.strokeStyle = strength >= 70 ? '#34D399' : strength >= 35 ? '#FBBF24' : '#F87171';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let x = startX; x <= endX; x += 3) {
+        const t = (x - startX) / Math.max(1, endX - startX);
+        const attenFactor = 1 - t * (1 - strength / 100);
+        const baseAmp = 48 * Math.max(0.08, attenFactor);
+        const jitter = (spec.emiShield !== 'immune' && labEmi !== 'low')
+          ? (Math.sin(x * 0.7 + labPhase * 3) * (labEmi === 'high' ? 14 : 6))
+          : 0;
+        const y = midY + Math.sin(t * 26 - labPhase) * baseAmp + jitter;
+        if (x === startX) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // =========================================================================
+    // ARCADE MODE LOGIC: 1) BALAP CRIMPING RJ-45, 2) SIGNAL RUNNER, 3) WHEEL
+    // =========================================================================
+    let currentArcadeMode = 'crimp';
+
+    const RJ45_WIRES = [
+      { id: 'wo', name: 'Putih-Oranye', short: 'P-Oranye', hex: '#F97316', striped: true, pair: 'Pasangan Oranye' },
+      { id: 'o',  name: 'Oranye',       short: 'Oranye',   hex: '#EA580C', striped: false, pair: 'Pasangan Oranye' },
+      { id: 'wg', name: 'Putih-Hijau',  short: 'P-Hijau',  hex: '#22C55E', striped: true, pair: 'Pasangan Hijau' },
+      { id: 'b',  name: 'Biru',         short: 'Biru',     hex: '#2563EB', striped: false, pair: 'Pasangan Biru' },
+      { id: 'wb', name: 'Putih-Biru',   short: 'P-Biru',   hex: '#3B82F6', striped: true, pair: 'Pasangan Biru' },
+      { id: 'g',  name: 'Hijau',        short: 'Hijau',    hex: '#16A34A', striped: false, pair: 'Pasangan Hijau' },
+      { id: 'wbr',name: 'Putih-Cokelat',short: 'P-Cokelat',hex: '#A16207', striped: true, pair: 'Pasangan Cokelat' },
+      { id: 'br', name: 'Cokelat',      short: 'Cokelat',  hex: '#78350F', striped: false, pair: 'Pasangan Cokelat' }
+    ];
+
+    const CRIMP_STANDARDS = {
+      T568B: ['wo', 'o', 'wg', 'b', 'wb', 'g', 'wbr', 'br'],
+      T568A: ['wg', 'g', 'wo', 'b', 'wb', 'o', 'wbr', 'br'],
+      BLIND_B: ['wo', 'o', 'wg', 'b', 'wb', 'g', 'wbr', 'br']
+    };
+
+    let crimpStandard = 'T568B';
+    let crimpInserted = [];
+    let crimpShuffledPool = [];
+    let crimpTimeLeft = 25.0;
+    let crimpTimerRunning = false;
+    let crimpLastTick = 0;
+    let crimpTesterStep = -1; // -1 idle, 0..7 testing pin i, 8 done
+    let crimpTesterResults = [];
+    let crimpCheatVisible = true;
+    let crimpLeaderboard = [
+      { name: 'Tim Fiber Kilat', time: '11.4s', standard: 'T568B' },
+      { name: 'Tim UTP Juara', time: '14.8s', standard: 'T568B' }
+    ];
+
+    function playPartySound(kind) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        if (kind === 'fanfare') {
+          [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.11);
+            gain.gain.setValueAtTime(0.18, now + i * 0.11);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.11 + 0.28);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.11);
+            osc.stop(now + i * 0.11 + 0.29);
+          });
+        } else if (kind === 'siren') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.linearRampToValueAtTime(880, now + 0.25);
+          osc.frequency.linearRampToValueAtTime(440, now + 0.5);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.56);
+        } else if (kind === 'buzzer') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(150, now);
+          osc.frequency.setValueAtTime(115, now + 0.15);
+          gain.gain.setValueAtTime(0.22, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.44);
+        } else if (kind === 'drum') {
+          for (let i = 0; i < 6; i++) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(120 + (i % 2) * 30, now + i * 0.07);
+            gain.gain.setValueAtTime(0.16, now + i * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.06);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.07);
+            osc.stop(now + i * 0.07 + 0.065);
+          }
+        }
+      } catch (e) {}
+    }
+
+    function switchArcadeMode(mode) {
+      playTone('click');
+      currentArcadeMode = mode;
+      const modes = [
+        { id: 'crimp', panel: 'arcadePanelCrimp', btn: 'subBtnCrimp' },
+        { id: 'runner', panel: 'arcadePanelRunner', btn: 'subBtnRunner' },
+        { id: 'wheel', panel: 'arcadePanelWheel', btn: 'subBtnWheel' }
+      ];
+      modes.forEach(m => {
+        const p = document.getElementById(m.panel);
+        const b = document.getElementById(m.btn);
+        if (m.id === mode) {
+          p.classList.remove('hidden');
+          b.classList.add('tab-btn-active');
+        } else {
+          p.classList.add('hidden');
+          b.classList.remove('tab-btn-active');
+        }
+      });
+      resizeCanvases();
+    }
+
+    function changeCrimpStandard(val) {
+      crimpStandard = val;
+      const cheatTitle = document.getElementById('crimpCheatTitle');
+      const cheatText = document.getElementById('crimpCheatText');
+      if (val === 'T568A') {
+        cheatTitle.textContent = 'Komando Penonton — Urutan T568A (Pin 1 → 8):';
+        cheatText.innerHTML = '<strong>1.</strong> Putih-Hijau • <strong>2.</strong> Hijau • <strong>3.</strong> Putih-Oranye • <strong>4.</strong> Biru • <strong>5.</strong> Putih-Biru • <strong>6.</strong> Oranye • <strong>7.</strong> Putih-Cokelat • <strong>8.</strong> Cokelat';
+        crimpCheatVisible = true;
+      } else if (val === 'BLIND_B') {
+        cheatTitle.textContent = 'MODE BUTA AKTIF (T568B Tanpa Contekan!):';
+        cheatText.innerHTML = '🙈 <em>Contekan disembunyikan! Penonton di kelas boleh berteriak memberi petunjuk warna kepada pemain!</em>';
+      } else {
+        cheatTitle.textContent = 'Komando Penonton — Urutan T568B (Pin 1 → 8):';
+        cheatText.innerHTML = '<strong>1.</strong> Putih-Oranye • <strong>2.</strong> Oranye • <strong>3.</strong> Putih-Hijau • <strong>4.</strong> Biru • <strong>5.</strong> Putih-Biru • <strong>6.</strong> Hijau • <strong>7.</strong> Putih-Cokelat • <strong>8.</strong> Cokelat';
+      }
+      startNewCrimpRound();
+    }
+
+    function toggleCrimpCheatSheet() {
+      crimpCheatVisible = !crimpCheatVisible;
+      const cheatText = document.getElementById('crimpCheatText');
+      cheatText.classList.toggle('hidden', !crimpCheatVisible);
+    }
+
+    function startNewCrimpRound() {
+      crimpInserted = [];
+      crimpTesterStep = -1;
+      crimpTesterResults = [];
+      crimpTimeLeft = 25.0;
+      crimpTimerRunning = false;
+      crimpShuffledPool = [...RJ45_WIRES].sort(() => Math.random() - 0.5);
+      document.getElementById('crimpTimerDisplay').textContent = '25.0s';
+      document.getElementById('crimpNextPinNum').textContent = '1';
+      document.getElementById('crimpStatusBadge').textContent = 'Siap Merakit (0 / 8 Pin)';
+      document.getElementById('crimpStatusBadge').className = 'px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
+      renderCrimpWirePalette();
+      renderCrimpLeaderboard();
+    }
+
+    function renderCrimpWirePalette() {
+      const container = document.getElementById('crimpWirePalette');
+      if (!container) return;
+      container.innerHTML = '';
+      crimpShuffledPool.forEach((w, idx) => {
+        const used = crimpInserted.includes(w.id);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.disabled = used || crimpInserted.length >= 8;
+        btn.onclick = () => insertCrimpWire(w.id);
+        btn.className = 'p-2.5 rounded-xl border text-left transition flex items-center gap-2.5 ' +
+          (used
+            ? 'opacity-35 bg-slate-900 border-slate-800 cursor-not-allowed'
+            : 'bg-slate-900/90 hover:bg-slate-800 border-slate-600 hover:border-orange-400 cursor-pointer');
+
+        const swatchStyle = w.striped
+          ? `background: repeating-linear-gradient(45deg, #FFFFFF, #FFFFFF 5px, ${w.hex} 5px, ${w.hex} 10px);`
+          : `background: ${w.hex};`;
+
+        btn.innerHTML = `
+          <span class="w-6 h-6 rounded-full border border-white/40 shrink-0 shadow" style="${swatchStyle}"></span>
+          <div class="min-w-0 flex-1">
+            <span class="text-xs font-bold text-white block truncate">${w.name}</span>
+            <span class="text-[10px] text-slate-400 block">${w.pair}</span>
+          </div>
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    function insertCrimpWire(wireId) {
+      if (crimpInserted.length >= 8 || crimpInserted.includes(wireId)) return;
+      if (!crimpTimerRunning && crimpInserted.length === 0) {
+        crimpTimerRunning = true;
+        crimpLastTick = performance.now();
+      }
+      crimpInserted.push(wireId);
+      playTone('click');
+      const nextPin = Math.min(8, crimpInserted.length + 1);
+      document.getElementById('crimpNextPinNum').textContent = String(nextPin);
+      document.getElementById('crimpStatusBadge').textContent = `Terpasang ${crimpInserted.length} / 8 Pin`;
+      renderCrimpWirePalette();
+    }
+
+    function undoLastCrimpWire() {
+      if (crimpInserted.length === 0) return;
+      crimpInserted.pop();
+      crimpTesterStep = -1;
+      playTone('click');
+      document.getElementById('crimpNextPinNum').textContent = String(crimpInserted.length + 1);
+      document.getElementById('crimpStatusBadge').textContent = `Terpasang ${crimpInserted.length} / 8 Pin`;
+      renderCrimpWirePalette();
+    }
+
+    function executeCrimpingTest() {
+      const banner = document.getElementById('crimpResultBanner');
+      if (crimpInserted.length < 8) {
+        playPartySound('buzzer');
+        banner.className = 'p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/50 text-xs text-rose-200 leading-relaxed';
+        banner.innerHTML = `⚠️ <strong>BELUM LENGKAP!</strong> Baru ${crimpInserted.length} kawat yang masuk ke konektor RJ-45. Masukkan seluruh 8 kawat (Pin 1 sampai Pin 8) sebelum menekan Tang Crimping!`;
+        return;
+      }
+      crimpTimerRunning = false;
+      const targetOrder = CRIMP_STANDARDS[crimpStandard];
+      crimpTesterResults = crimpInserted.map((id, idx) => id === targetOrder[idx]);
+      crimpTesterStep = 0;
+
+      // Animate sequential 8-LED sweep
+      let step = 0;
+      const sweepInterval = setInterval(() => {
+        crimpTesterStep = step;
+        if (crimpTesterResults[step]) {
+          playTone('click');
+        } else {
+          playPartySound('buzzer');
+        }
+        step++;
+        if (step >= 8) {
+          clearInterval(sweepInterval);
+          setTimeout(() => finalizeCrimpEvaluation(), 250);
+        }
+      }, 140);
+    }
+
+    function finalizeCrimpEvaluation() {
+      const correctCount = crimpTesterResults.filter(Boolean).length;
+      const banner = document.getElementById('crimpResultBanner');
+      const badge = document.getElementById('crimpStatusBadge');
+      const elapsed = Math.max(0.5, 25.0 - crimpTimeLeft).toFixed(1);
+
+      if (correctCount === 8) {
+        playPartySound('fanfare');
+        badge.textContent = `LULUS UJI GIGABIT! (${elapsed}s)`;
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+        banner.className = 'p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/50 text-xs text-emerald-200 leading-relaxed';
+        banner.innerHTML = `🎉 <strong>CRIMPING SEMPURNA (8/8 PIN LULUS LAN TESTER DALAM ${elapsed} DETIK)!</strong> Pasangan TX (Pin 1–2) dan RX (Pin 3–6) terhubung presisi sesuai standar <strong>${crimpStandard === 'BLIND_B' ? 'T568B (Mode Buta)' : crimpStandard}</strong>. Siap mengalirkan Gigabit Ethernet &amp; PoE!`;
+
+        const playerName = (document.getElementById('crimpPlayerName').value || 'Siswa Jagoan').trim();
+        crimpLeaderboard.push({
+          name: playerName,
+          time: elapsed + 's',
+          numTime: parseFloat(elapsed),
+          standard: crimpStandard === 'BLIND_B' ? 'T568B Buta' : crimpStandard
+        });
+        crimpLeaderboard.sort((a, b) => (a.numTime || parseFloat(a.time)) - (b.numTime || parseFloat(b.time)));
+        crimpLeaderboard = crimpLeaderboard.slice(0, 4);
+        renderCrimpLeaderboard();
+      } else {
+        playPartySound('buzzer');
+        const wrongPins = crimpTesterResults
+          .map((ok, i) => ok ? null : `Pin ${i + 1}`)
+          .filter(Boolean)
+          .join(', ');
+        badge.textContent = `GAGAL UJI (${correctCount}/8 Benar)`;
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40';
+        banner.className = 'p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/50 text-xs text-rose-200 leading-relaxed';
+        banner.innerHTML = `❌ <strong>KORSLET / SALAH URUTAN PADA ${wrongPins.toUpperCase()}!</strong> Lampu merah pada LAN Tester menyala di ${wrongPins}. Cabut pin yang salah atau klik <strong>Acak Ulang</strong> untuk mencoba lagi!`;
+      }
+    }
+
+    function renderCrimpLeaderboard() {
+      const list = document.getElementById('crimpLeaderboardList');
+      if (!list) return;
+      list.innerHTML = '';
+      crimpLeaderboard.forEach((item, idx) => {
+        const badge = document.createElement('div');
+        badge.className = 'px-3 py-1.5 rounded-xl bg-slate-900 border border-indigo-500/30 text-xs flex items-center gap-2';
+        badge.innerHTML = `
+          <span class="font-extrabold text-orange-400">#${idx + 1}</span>
+          <span class="font-semibold text-white">${item.name}</span>
+          <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[11px]">${item.time}</span>
+          <span class="text-[10px] text-slate-400">(${item.standard})</span>
+        `;
+        list.appendChild(badge);
+      });
+    }
+
+    function drawCrimpCanvas() {
+      const c = document.getElementById('crimpCanvas');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      const w = c.width;
+      const h = c.height;
+      ctx.clearRect(0, 0, w, h);
+
+      // Update timer if running
+      if (crimpTimerRunning) {
+        const now = performance.now();
+        const dt = (now - crimpLastTick) / 1000;
+        crimpLastTick = now;
+        crimpTimeLeft = Math.max(0, crimpTimeLeft - dt);
+        const timerEl = document.getElementById('crimpTimerDisplay');
+        if (timerEl) timerEl.textContent = crimpTimeLeft.toFixed(1) + 's';
+        if (crimpTimeLeft <= 0) {
+          crimpTimerRunning = false;
+          playPartySound('siren');
+          const banner = document.getElementById('crimpResultBanner');
+          if (banner) {
+            banner.className = 'p-3.5 rounded-xl bg-amber-950/80 border border-amber-500/50 text-xs text-amber-200 leading-relaxed';
+            banner.innerHTML = '⏰ <strong>WAKTU HABIS!</strong> Ayo penonton bantu teriakkan urutan warnanya, lalu klik <strong>Acak Ulang</strong> untuk ronde baru!';
+          }
+        }
+      }
+
+      // Draw RJ-45 Plug Housing on Left-Center & LAN Tester Box on Right
+      const plugX = Math.max(24, w * 0.06);
+      const plugW = Math.min(w * 0.54, 380);
+      const plugY = 28;
+      const plugH = h - 56;
+
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.85)';
+      ctx.strokeStyle = '#6366F1';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(plugX, plugY, plugW, plugH, 14);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#E2E8F0';
+      ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText('KONEKTOR RJ-45 (PENGAIT DI BAWAH: PIN 1 → 8)', plugX + 14, plugY + 22);
+
+      const slotStartX = plugX + 18;
+      const slotW = (plugW - 36) / 8;
+      const slotTop = plugY + 38;
+      const slotBottom = plugY + plugH - 22;
+
+      for (let i = 0; i < 8; i++) {
+        const sx = slotStartX + i * slotW;
+        // Gold contact pin at top
+        ctx.fillStyle = '#FACC15';
+        ctx.fillRect(sx + slotW * 0.22, slotTop, slotW * 0.56, 22);
+
+        // Pin number label
+        ctx.fillStyle = '#94A3B8';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.fillText('P' + (i + 1), sx + slotW * 0.24, slotTop - 5);
+
+        // Wire slot channel
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.28)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(sx + 3, slotTop + 24, slotW - 6, slotBottom - slotTop - 24);
+
+        const wireId = crimpInserted[i];
+        if (wireId) {
+          const wireObj = RJ45_WIRES.find(w => w.id === wireId);
+          if (wireObj) {
+            ctx.fillStyle = wireObj.hex;
+            ctx.fillRect(sx + 6, slotTop + 26, slotW - 12, slotBottom - slotTop - 28);
+            if (wireObj.striped) {
+              ctx.fillStyle = '#FFFFFF';
+              for (let sy = slotTop + 32; sy < slotBottom - 10; sy += 18) {
+                ctx.fillRect(sx + 6, sy, slotW - 12, 7);
+              }
+            }
+          }
+        }
+      }
+
+      // Draw LAN Tester LED Panel on Right
+      const testerX = plugX + plugW + 20;
+      const testerW = Math.max(150, w - testerX - 20);
+      if (testerW > 110) {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+        ctx.strokeStyle = '#F97316';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(testerX, plugY, testerW, plugH, 14);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#F97316';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.fillText('LAN TESTER (1-8)', testerX + 14, plugY + 22);
+
+        const ledStartY = plugY + 38;
+        const ledRowH = (plugH - 48) / 8;
+        for (let i = 0; i < 8; i++) {
+          const ly = ledStartY + i * ledRowH;
+          let ledColor = '#334155';
+          let statusLabel = 'Standby';
+          if (crimpTesterStep >= i && crimpTesterResults.length === 8) {
+            if (crimpTesterResults[i]) {
+              ledColor = '#22C55E';
+              statusLabel = 'OK (Terhubung)';
+            } else {
+              ledColor = '#EF4444';
+              statusLabel = 'SALAH WARNA!';
+            }
+          }
+          ctx.beginPath();
+          ctx.arc(testerX + 24, ly + ledRowH * 0.45, 7, 0, Math.PI * 2);
+          ctx.fillStyle = ledColor;
+          ctx.fill();
+
+          ctx.fillStyle = '#E2E8F0';
+          ctx.font = 'bold 11px Inter, sans-serif';
+          ctx.fillText(`LED ${i + 1}: ${statusLabel}`, testerX + 40, ly + ledRowH * 0.45 + 4);
+        }
+      }
+    }
+
+    // =========================================================================
+    // SUB-GAME 2: SIGNAL RUNNER LIVE ACTION GAME
+    // =========================================================================
+    const RUNNER_HAZARDS = [
+      { title: '⚡ PETIR & MESIN LAS (EMI TINGGI)', reqMedia: 1, hint: 'Pilih [2] FIBER OPTIK (Kebal Petir/EMI)!', color: '#38BDF8' },
+      { title: '🏢 GEDUNG SEBERANG (JARAK 1.500m)', reqMedia: 1, hint: 'Pilih [2] FIBER OPTIK (Tembus >100m)!', color: '#38BDF8' },
+      { title: '💻 PC LAB UJIAN (JARAK 25m + PoE)', reqMedia: 0, hint: 'Pilih [1] KABEL UTP/STP (Hemat & Stabil <=100m)!', color: '#F97316' },
+      { title: '📱 TABLET & HP SISWA KELILING', reqMedia: 2, hint: 'Pilih [3] WI-FI DUAL-BAND (Tanpa Kabel)!', color: '#22C55E' },
+      { title: '📹 KAMERA CCTV KORIDOR (DAYA PoE 60m)', reqMedia: 0, hint: 'Pilih [1] KABEL UTP/STP (Hantar Listrik PoE)!', color: '#F97316' },
+      { title: '🌳 TAMAN SEKOLAH AREA TERBUKA', reqMedia: 2, hint: 'Pilih [3] WI-FI DUAL-BAND (Mobilitas Siswa)!', color: '#22C55E' }
+    ];
+
+    let runnerActive = false;
+    let runnerMedia = 0; // 0: UTP, 1: Fiber, 2: Wi-Fi
+    let runnerScore = 0;
+    let runnerCombo = 1;
+    let runnerLives = 3;
+    let runnerObstacle = null;
+    let runnerFeedback = 'Tekan "▶ Mulai Lari!" lalu ganti media dengan Tombol 1, 2, atau 3!';
+
+    function setRunnerMedia(idx) {
+      runnerMedia = idx;
+      playTone('click');
+      [0, 1, 2].forEach(i => {
+        const btn = document.getElementById('runnerBtnMedia' + i);
+        if (!btn) return;
+        if (i === idx) {
+          btn.className = 'p-3.5 rounded-xl border-2 border-orange-400 bg-indigo-900/70 text-left transition flex items-center justify-between ring-2 ring-orange-400/50';
+        } else {
+          btn.className = 'p-3.5 rounded-xl border-2 border-slate-700 bg-slate-900/80 text-left transition flex items-center justify-between opacity-80 hover:opacity-100';
+        }
+      });
+    }
+
+    function spawnRunnerObstacle() {
+      const pick = RUNNER_HAZARDS[Math.floor(Math.random() * RUNNER_HAZARDS.length)];
+      runnerObstacle = {
+        ...pick,
+        x: 1.0, // normalized 1.0 -> 0.15
+        speed: 0.0045 + Math.min(0.005, runnerScore * 0.000004)
+      };
+    }
+
+    function startRunnerGame() {
+      runnerActive = true;
+      runnerScore = 0;
+      runnerCombo = 1;
+      runnerLives = 3;
+      runnerFeedback = 'Ayo Penonton! Teriakkan tombol media (1, 2, atau 3) sesuai rintangan yang mendekat!';
+      updateRunnerHUD();
+      spawnRunnerObstacle();
+      playPartySound('fanfare');
+    }
+
+    function updateRunnerHUD() {
+      const s = document.getElementById('runnerScoreText');
+      const c = document.getElementById('runnerComboText');
+      const l = document.getElementById('runnerLivesText');
+      if (s) s.textContent = String(runnerScore);
+      if (c) c.textContent = 'x' + runnerCombo;
+      if (l) l.textContent = runnerLives > 0 ? '❤️'.repeat(runnerLives) : '💀 HABIS';
+    }
+
+    function drawRunnerCanvas() {
+      const c = document.getElementById('runnerCanvas');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      const w = c.width;
+      const h = c.height;
+      ctx.clearRect(0, 0, w, h);
+
+      // Background grid lane
+      const laneY = h * 0.56;
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.25)';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(0, laneY);
+      ctx.lineTo(w, laneY);
+      ctx.stroke();
+
+      // Player Packet Avatar at Left
+      const playerX = w * 0.16;
+      const mediaColors = ['#F97316', '#38BDF8', '#22C55E'];
+      const mediaNames = ['🔌 KABEL UTP/STP', '✨ FIBER OPTIK', '📡 WI-FI NIRKABEL'];
+      ctx.fillStyle = mediaColors[runnerMedia];
+      ctx.beginPath();
+      ctx.arc(playerX, laneY, 26, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText('PAKET DATA', playerX - 36, laneY - 36);
+      ctx.fillStyle = mediaColors[runnerMedia];
+      ctx.fillText(mediaNames[runnerMedia], playerX - 48, laneY + 46);
+
+      // Update & Draw Incoming Obstacle
+      if (runnerActive && runnerObstacle) {
+        runnerObstacle.x -= runnerObstacle.speed;
+        const obsX = runnerObstacle.x * w;
+        const gateW = Math.min(260, w * 0.42);
+        const gateH = 96;
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+        ctx.strokeStyle = runnerObstacle.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(obsX, laneY - gateH / 2, gateW, gateH, 14);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 13px Inter, sans-serif';
+        ctx.fillText(runnerObstacle.title, obsX + 12, laneY - 8);
+        ctx.fillStyle = '#FACC15';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillText(runnerObstacle.hint, obsX + 12, laneY + 18);
+
+        // Collision check at playerX
+        if (obsX <= playerX + 20) {
+          if (runnerMedia === runnerObstacle.reqMedia) {
+            runnerScore += 100 * runnerCombo;
+            runnerCombo = Math.min(8, runnerCombo + 1);
+            runnerFeedback = `✅ TEMBUS SEMPURNA! +${100 * (runnerCombo - 1)} Poin (Combo x${runnerCombo})!`;
+            playTone('success');
+          } else {
+            runnerLives -= 1;
+            runnerCombo = 1;
+            runnerFeedback = `💥 TABRAKAN SINYAL! Rintangan tadi butuh ${mediaNames[runnerObstacle.reqMedia]}!`;
+            playPartySound('buzzer');
+          }
+          updateRunnerHUD();
+          if (runnerLives <= 0) {
+            runnerActive = false;
+            runnerFeedback = `🏁 GAME OVER! Skor Akhir: ${runnerScore}. Klik "▶ Mulai Lari!" untuk menantang siswa berikutnya!`;
+            playPartySound('siren');
+          } else {
+            spawnRunnerObstacle();
+          }
+        }
+      }
+
+      // Draw Top Feedback Banner inside Canvas
+      ctx.fillStyle = 'rgba(30, 27, 75, 0.9)';
+      ctx.fillRect(0, 0, w, 40);
+      ctx.fillStyle = '#F8FAFC';
+      ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText(runnerFeedback, 16, 25);
+    }
+
+    // Keyboard shortcut 1, 2, 3 for Runner Game
+    window.addEventListener('keydown', (e) => {
+      if (currentTab === 'arcade' && currentArcadeMode === 'runner') {
+        if (e.key === '1') setRunnerMedia(0);
+        if (e.key === '2') setRunnerMedia(1);
+        if (e.key === '3') setRunnerMedia(2);
+      }
+    });
+
+    // =========================================================================
+    // SUB-GAME 3: CLASSROOM SPIN WHEEL PARTY MODE
+    // =========================================================================
+    const WHEEL_SLICES = [
+      { label: 'Sebutkan Pin 1-4 T568B!', color: '#F97316', title: '⚡ Tantangan 8 Detik: Pin 1–4 T568B!', desc: 'Tunjuk 1 penonton di barisan belakang untuk menyebutkan urutan warna Pin 1 sampai Pin 4 standar T568B dengan lantang!', ans: 'Pin 1: Putih-Oranye, Pin 2: Oranye, Pin 3: Putih-Hijau, Pin 4: Biru.' },
+      { label: 'Kenapa Fiber Kebal Petir?', color: '#3B82F6', title: '🌩️ Pertanyaan Kilat: Rahasia Fiber Optik', desc: 'Kenapa kabel Fiber Optik sama sekali tidak terganggu oleh sambaran petir atau induksi mesin las listrik?', ans: 'Karena intinya terbuat dari serat kaca murni yang menghantarkan pulsa cahaya (foton), bukan arus listrik seperti tembaga.' },
+      { label: 'Duel Cepat 2 Siswa!', color: '#10B981', title: '🔥 DUEL LANGSUNG: 2 Siswa Lomba Crimping!', desc: 'Pilih 2 siswa maju ke depan untuk berlomba menyusun 8 pin RJ-45 di Mode Balap Crimping. Siapa paling cepat dapat tepuk tangan sekelas!', ans: 'Gunakan tab "1. Balap Crimping RJ-45" dan catat waktu tercepat di Papan Rekor!' },
+      { label: 'Jebakan Pin 3 & Pin 6!', color: '#8B5CF6', title: '🧠 Tebakan Teknisi: Kenapa Pin 3 & 6 Terpisah?', desc: 'Kenapa warna Hijau pada T568B ditaruh di Pin 3 dan Pin 6 (mengapit Biru di Pin 4-5), bukan dipasang bersebelahan di Pin 3 dan 4?', ans: 'Agar Pin 3 dan Pin 6 tetap berasal dari pasangan pilinan yang sama untuk mencegah gangguan split-pair crosstalk pada Gigabit Ethernet.' },
+      { label: 'Wi-Fi 2,4 GHz vs 5 GHz', color: '#EC4899', title: '📡 Tantangan Sinyal Tembok Beton!', desc: 'Jika siswa berada di balik 2 tembok kelas yang tebal, frekuensi Wi-Fi mana yang sinyalnya lebih kuat menembus tembok: 2,4 GHz atau 5 GHz?', ans: 'Frekuensi 2,4 GHz karena panjang gelombangnya lebih besar sehingga lebih tahan redaman tembok dibanding 5 GHz.' },
+      { label: 'Batas Jarak Kabel UTP!', color: '#EAB308', title: '📏 Berapa Meter Batas Maksimal UTP?', desc: 'Berapa meter panjang maksimal kabel UTP (Cat5e/Cat6) sebelum sinyal mengalami atenuasi (pelemahan) dan wajib dipasang Switch/Repeater?', ans: '100 Meter (328 kaki) sesuai standar ANSI/TIA-568.' },
+      { label: 'Apa Itu Kabel Crossover?', color: '#06B6D4', title: '🔀 Tantangan Kabel Straight vs Crossover!', desc: 'Jika ujung A kabel LAN memakai standar T568A dan ujung B memakai standar T568B, disebut kabel apakah itu?', ans: 'Kabel Crossover (Silang), yang menukar pasangan kirim (TX) dan terima (RX).' },
+      { label: 'Bonus Poin +100 Sekelas!', color: '#22C55E', title: '🎁 JACKPOT KOMPAK SEKELAS!', desc: 'Hitungan 1-2-3, seluruh kelas serentak meneriakkan batas jarak maksimal Kabel UTP! Kalau kompak, tim aktif dapat bonus!', ans: '100 METER!' }
+    ];
+
+    let wheelAngle = 0;
+    let wheelSpinning = false;
+    let wheelAnswerShown = false;
+
+    function drawWheelCanvas() {
+      const c = document.getElementById('wheelCanvas');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      const cx = c.width / 2;
+      const cy = c.height / 2;
+      const r = Math.min(cx, cy) - 12;
+      ctx.clearRect(0, 0, c.width, c.height);
+
+      const arc = (Math.PI * 2) / WHEEL_SLICES.length;
+      WHEEL_SLICES.forEach((slice, i) => {
+        const start = wheelAngle + i * arc;
+        const end = start + arc;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, start, end);
+        ctx.closePath();
+        ctx.fillStyle = slice.color;
+        ctx.fill();
+        ctx.strokeStyle = '#0F172A';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(start + arc / 2);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.fillText(slice.label, r - 12, 4);
+        ctx.restore();
+      });
+
+      // Center hub
+      ctx.beginPath();
+      ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+      ctx.fillStyle = '#0F172A';
+      ctx.fill();
+      ctx.strokeStyle = '#F8FAFC';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Right pointer arrow (at angle 0)
+      ctx.beginPath();
+      ctx.moveTo(c.width - 4, cy - 12);
+      ctx.lineTo(c.width - 4, cy + 12);
+      ctx.lineTo(c.width - 24, cy);
+      ctx.closePath();
+      ctx.fillStyle = '#FACC15';
+      ctx.fill();
+    }
+
+    function spinClassroomWheel() {
+      if (wheelSpinning) return;
+      wheelSpinning = true;
+      wheelAnswerShown = false;
+      document.getElementById('wheelAnswerBox').classList.add('hidden');
+      const totalRotation = Math.PI * 8 + Math.random() * Math.PI * 6;
+      const startAngle = wheelAngle;
+      const duration = 2400;
+      const startTime = performance.now();
+
+      function stepWheel(now) {
+        const t = Math.min(1, (now - startTime) / duration);
+        const easeOut = 1 - Math.pow(1 - t, 3);
+        wheelAngle = startAngle + totalRotation * easeOut;
+        drawWheelCanvas();
+        if (t < 1) {
+          requestAnimationFrame(stepWheel);
+        } else {
+          wheelSpinning = false;
+          playPartySound('fanfare');
+          const arc = (Math.PI * 2) / WHEEL_SLICES.length;
+          const norm = ((Math.PI * 2) - (wheelAngle % (Math.PI * 2))) % (Math.PI * 2);
+          const idx = Math.floor(norm / arc) % WHEEL_SLICES.length;
+          const picked = WHEEL_SLICES[idx];
+          document.getElementById('wheelResultTitle').textContent = picked.title;
+          document.getElementById('wheelResultDesc').textContent = picked.desc;
+          document.getElementById('wheelAnswerText').textContent = picked.ans;
+        }
+      }
+      playPartySound('drum');
+      requestAnimationFrame(stepWheel);
+    }
+
+    function toggleWheelAnswer() {
+      wheelAnswerShown = !wheelAnswerShown;
+      document.getElementById('wheelAnswerBox').classList.toggle('hidden', !wheelAnswerShown);
+      playTone('click');
+    }
+
+    function animateLoop() {
+      if (currentTab === 'arcade') {
+        if (currentArcadeMode === 'crimp') drawCrimpCanvas();
+        else if (currentArcadeMode === 'runner') drawRunnerCanvas();
+      } else if (currentTab === 'mission') {
+        drawMissionCanvas();
+      } else if (currentTab === 'lab') {
+        drawLabCanvas();
+      }
+      requestAnimationFrame(animateLoop);
+    }
+
+    window.addEventListener('resize', resizeCanvases);
+    window.addEventListener('load', () => {
+      // Seed default animated packets so canvas is lively on load
+      for (let i = 0; i < 6; i++) {
+        animPackets.push({ progress: i * 0.16, speed: 0.006, alive: true });
+      }
+      startNewCrimpRound();
+      drawWheelCanvas();
+      loadCurrentMission();
+      updateLabSimulation();
+      renderBattleQuestion();
+      resizeCanvases();
+      requestAnimationFrame(animateLoop);
+    });
+  </script>
+</body>
+</html>
